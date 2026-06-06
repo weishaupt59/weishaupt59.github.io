@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratorio di Sistemi Operativi — Riassunto (es1–es11)</title>
+<style>
+:root{
+  --bg:#0f1419; --bg2:#171d26; --bg3:#1e2630; --panel:#141a22;
+  --fg:#d7dee8; --fg-dim:#94a3b3; --muted:#6b7886;
+  --accent:#4fb6ff; --accent2:#7ee787; --warn:#ffb454; --danger:#ff7b72;
+  --border:#27313d; --code-bg:#10151c; --row:#161d27; --row2:#131922;
+  --kw:#ff7b9c; --ty:#7ee0ff; --fn:#d2a8ff; --str:#9ece6a; --num:#ffb454; --com:#5c6b7a; --pre:#79c0ff;
+}
+[data-theme="light"]{
+  --bg:#f6f8fa; --bg2:#ffffff; --bg3:#eef1f5; --panel:#ffffff;
+  --fg:#1c2733; --fg-dim:#475569; --muted:#7a8694;
+  --accent:#0969da; --accent2:#1a7f37; --warn:#bc4c00; --danger:#cf222e;
+  --border:#d8dee4; --code-bg:#f4f6f9; --row:#fbfcfd; --row2:#f1f4f7;
+  --kw:#cf222e; --ty:#0550ae; --fn:#8250df; --str:#0a7d27; --num:#bc4c00; --com:#8a949e; --pre:#0550ae;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* layout */
+.layout{display:flex;align-items:flex-start}
+aside{position:sticky;top:0;height:100vh;width:260px;flex:0 0 260px;
+  background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden}
+.brand{padding:16px 16px 10px;border-bottom:1px solid var(--border)}
+.brand h1{font-size:15px;margin:0 0 2px;letter-spacing:.2px}
+.brand small{color:var(--muted);font-size:11.5px}
+.searchwrap{padding:10px 12px;border-bottom:1px solid var(--border)}
+#search{width:100%;padding:8px 10px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--fg);font-size:13px;outline:none}
+#search:focus{border-color:var(--accent)}
+.searchwrap .hint{color:var(--muted);font-size:10.5px;margin-top:6px}
+nav{overflow:auto;padding:8px 6px;flex:1}
+nav a{display:flex;gap:8px;align-items:baseline;padding:6px 10px;border-radius:7px;
+  color:var(--fg-dim);font-size:13px;line-height:1.3}
+nav a:hover{background:var(--bg3);text-decoration:none;color:var(--fg)}
+nav a.active{background:var(--bg3);color:var(--accent);font-weight:600}
+nav a b{color:var(--accent);font-size:11px;font-weight:700;min-width:30px;font-variant-numeric:tabular-nums}
+.toolbar{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px}
+.btn{flex:1;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--fg);
+  border-radius:8px;padding:7px 8px;font-size:12px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+
+main{flex:1;min-width:0;max-width:1000px;margin:0 auto;padding:28px 40px 80px}
+.intro{color:var(--fg-dim);margin:0 0 22px;font-size:13.5px}
+.intro b{color:var(--fg)}
+
+/* sections */
+.section{border:1px solid var(--border);border-radius:12px;margin:0 0 16px;background:var(--bg2);overflow:hidden;scroll-margin-top:14px}
+.sec-head{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;
+  padding:14px 18px;margin:0;background:linear-gradient(180deg,var(--bg3),var(--bg2))}
+.sec-head:hover{background:var(--bg3)}
+.chev{transition:transform .15s;color:var(--muted);font-size:12px}
+.section.collapsed .chev{transform:rotate(-90deg)}
+.sec-num{color:var(--accent);font-weight:800;font-size:13px;min-width:40px;font-variant-numeric:tabular-nums}
+.sec-title{font-size:16px;margin:0;font-weight:700;flex:1}
+.sec-title span{display:block;font-size:11.5px;color:var(--muted);font-weight:400;margin-top:1px}
+.section-body{padding:6px 18px 18px}
+.section.collapsed .section-body{display:none}
+.section.force-open .section-body{display:block!important}
+
+.block{padding:8px 0;border-top:1px dashed var(--border)}
+.block:first-child{border-top:none}
+h3{font-size:13.5px;margin:8px 0 8px;color:var(--accent2);letter-spacing:.2px;
+  text-transform:uppercase;font-weight:700}
+p{margin:6px 0}
+ul{margin:6px 0;padding-left:20px}
+li{margin:3px 0}
+.muted{color:var(--muted)}
+
+/* inline code + keys */
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px;background:var(--code-bg);border:1px solid var(--border);
+  padding:1px 5px;border-radius:5px;color:var(--pre)}
+.kbd{font-family:inherit;font-size:11px;background:var(--bg3);border:1px solid var(--border);
+  border-bottom-width:2px;padding:1px 6px;border-radius:5px;color:var(--fg)}
+
+/* tables */
+table.tbl{width:100%;border-collapse:collapse;margin:8px 0;font-size:13px}
+.tbl th,.tbl td{text-align:left;padding:6px 10px;border:1px solid var(--border);vertical-align:top}
+.tbl thead th{background:var(--bg3);color:var(--fg);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px}
+.tbl tbody tr:nth-child(odd){background:var(--row2)}
+.tbl tbody tr:nth-child(even){background:var(--row)}
+.tbl td code{background:transparent;border:none;padding:0;color:var(--fn);white-space:nowrap}
+.tbl td:first-child{white-space:nowrap}
+
+/* snippets */
+.snippet{margin:10px 0}
+.cap{font-size:11px;color:var(--muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--border);border-radius:9px;
+  padding:12px 14px;overflow:auto}
+pre code{background:none;border:none;padding:0;color:var(--fg);font-size:12.5px;line-height:1.5;white-space:pre}
+.tok-kw{color:var(--kw)}.tok-ty{color:var(--ty)}.tok-fn{color:var(--fn)}
+.tok-str{color:var(--str)}.tok-num{color:var(--num)}.tok-com{color:var(--com);font-style:italic}.tok-pre{color:var(--str)}
+
+/* callouts */
+.note,.tip,.warn{border-left:3px solid var(--accent);background:var(--bg3);
+  padding:8px 12px;border-radius:0 8px 8px 0;margin:10px 0;font-size:13px}
+.tip{border-color:var(--accent2)}
+.warn{border-color:var(--warn)}
+.note b,.tip b,.warn b{color:var(--fg)}
+
+footer{color:var(--muted);font-size:12px;text-align:center;margin-top:30px;padding-top:16px;border-top:1px solid var(--border)}
+.noresult{display:none;color:var(--muted);text-align:center;padding:40px;font-size:14px}
+
+/* mobile */
+.hamb{display:none;position:fixed;top:12px;left:12px;z-index:30;
+  background:var(--panel);border:1px solid var(--border);color:var(--fg);
+  border-radius:8px;padding:8px 12px;cursor:pointer;font-size:16px}
+@media(max-width:900px){
+  .hamb{display:block}
+  aside{position:fixed;left:0;top:0;z-index:20;transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 40px rgba(0,0,0,.5)}
+  body.menu-open aside{transform:translateX(0)}
+  main{padding:60px 18px 60px}
+}
+</style>
+</head>
+<body>
+<button class="hamb" id="hamb" aria-label="Menu">☰</button>
+<div class="layout">
+<aside id="aside">
+  <div class="brand">
+    <h1>Lab. Sistemi Operativi</h1>
+    <small>Ing. Informatica · UniPi · A.A. 2023/24</small>
+  </div>
+  <div class="searchwrap">
+    <input id="search" type="search" placeholder="🔎 Cerca comando / funzione…" autocomplete="off">
+    <div class="hint">es. <code>fork</code>, <code>chmod</code>, <code>pthread_cond_wait</code></div>
+  </div>
+  <nav id="nav">
+    <a href="#es1"><b>ES1</b> Intro Unix/Linux</a>
+    <a href="#es2"><b>ES2</b> Utenti · permessi · vi</a>
+    <a href="#es3"><b>ES3</b> File di config utenti/gruppi</a>
+    <a href="#es4"><b>ES4</b> find · grep · tar</a>
+    <a href="#es5"><b>ES5</b> Processi: fork/exec/wait</a>
+    <a href="#es6"><b>ES6</b> Segnali</a>
+    <a href="#es7"><b>ES7</b> Job control · nice · top</a>
+    <a href="#es8"><b>ES8</b> Pthreads · mutex</a>
+    <a href="#es9"><b>ES9</b> Condition variables</a>
+    <a href="#es10"><b>ES10</b> VFS · file descriptor · pipe</a>
+    <a href="#es11"><b>ES11</b> Pilotare applicazioni</a>
+  </nav>
+  <div class="toolbar">
+    <button class="btn" id="expandAll">Espandi tutto</button>
+    <button class="btn" id="collapseAll">Comprimi</button>
+    <button class="btn" id="theme">☾ / ☀</button>
+  </div>
+</aside>
+
+<main id="main">
+<p class="intro">Riassunto schematico delle 11 esercitazioni del corso, <b>ridotto all'osso</b>: ogni comando, flag,
+system call e snippet delle slide. Clicca un titolo per <b>comprimere/espandere</b>, usa la <b>ricerca</b> per filtrare.</p>
+
+<!-- ================= ES1 ================= -->
+<section class="section" id="es1">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES1</span>
+    <span class="sec-title">Introduzione ai sistemi Unix/Linux<span>SO, filesystem, shell, comandi base, redirezione</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Sistema operativo &amp; storia</h3>
+      <ul>
+        <li><b>Timeline:</b> Unix (1969) → BSD (1977→FreeBSD/NetBSD/OpenBSD, Darwin/macOS) · Solaris · GNU (1984) · GNU/Linux (1994 → Debian, Ubuntu, Arch, Gentoo).</li>
+        <li><b>Componenti GNU/Linux:</b> <b>kernel</b> (controlla l'hardware) + <b>applicazioni</b> (shell / software di sistema / programmi utente).</li>
+        <li><b>Utenti:</b> <code>root</code> = amministratore (privilegi totali) · utenti normali = privilegi limitati. Buona pratica: account normale per l'uso quotidiano.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Filesystem</h3>
+      <ul>
+        <li>Gerarchia ad albero, radice unica <code>/</code>. <b>Everything is a file</b> (file, cartelle, dispositivi I/O, rete = stream di byte).</li>
+      </ul>
+      <table class="tbl"><thead><tr><th>Path</th><th>Contenuto</th></tr></thead><tbody>
+        <tr><td><code>/</code></td><td>directory radice (root)</td></tr>
+        <tr><td><code>/home</code></td><td>home directory degli utenti</td></tr>
+        <tr><td><code>/etc</code></td><td>file di configurazione</td></tr>
+        <tr><td><code>/sbin</code></td><td>programmi di sistema</td></tr>
+        <tr><td><code>/media</code></td><td>supporti rimovibili (es. <code>/media/cdrom</code>)</td></tr>
+      </tbody></table>
+      <ul>
+        <li><b>Path assoluto:</b> parte da <code>/</code> · <b>relativo:</b> dalla dir corrente.</li>
+        <li>Speciali: <code>~</code> home · <code>.</code> dir corrente · <code>..</code> dir padre. <b>Case-sensitive!</b></li>
+        <li>Tipo (in <code>ls -l</code>): <code>-</code> file normale, <code>d</code> directory.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Shell &amp; terminale</h3>
+      <ul>
+        <li>GUI (facile) vs <b>CLI</b> (più potente). Shell testuali: <code>sh</code> <code>csh</code> <code>tcsh</code> <code>bash</code> <code>zsh</code>.</li>
+        <li><b>Ciclo:</b> prompt → legge comando (Enter) → esegue → stampa output.</li>
+        <li><b>Prompt:</b> <code>alice@studio:~/Documents$</code> → utente@host:dir · <code>$</code> utente normale, <code>#</code> root.</li>
+        <li>Scorciatoie: <span class="kbd">Tab</span> autocompletamento · <span class="kbd">↑</span><span class="kbd">↓</span> history · <span class="kbd">Ctrl+R</span> ricerca storia · <span class="kbd">Ctrl+D</span> logout · <span class="kbd">Ctrl+Alt+T</span> terminale · <span class="kbd">Ctrl+Alt+F1…F6</span> terminali virtuali (F7 = GUI).</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Comandi base</h3>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><code>shutdown -h now</code></td><td>arresto immediato (solo root)</td></tr>
+        <tr><td><code>shutdown -r now</code></td><td>riavvio immediato (solo root)</td></tr>
+        <tr><td><code>cd [path]</code></td><td>cambia directory (<code>cd</code>/<code>cd ~</code> = home, <code>cd ..</code> = padre)</td></tr>
+        <tr><td><code>pwd</code></td><td>stampa la directory corrente (path assoluto)</td></tr>
+        <tr><td><code>ls [path]</code></td><td>elenca; <code>-l</code> dettagli, <code>-a</code> file nascosti (<code>.</code>), cumulabili <code>-al</code></td></tr>
+        <tr><td><code>man [sez] nome</code></td><td>manuale (sez: 1 comandi, 2 kernel, 3 lib C, 5 config…). Es. <code>man 3 printf</code></td></tr>
+        <tr><td><code>whatis nome</code></td><td>descrizione breve (cosa fa)</td></tr>
+        <tr><td><code>apropos parola</code></td><td>cerca nei nomi/descrizioni (come farlo)</td></tr>
+        <tr><td><code>mkdir / rmdir</code></td><td>crea / rimuove directory (rmdir solo se vuota)</td></tr>
+        <tr><td><code>cp [-r] src dst</code></td><td>copia (<code>-r</code> ricorsivo per directory)</td></tr>
+        <tr><td><code>mv src dst</code></td><td>sposta / rinomina</td></tr>
+        <tr><td><code>touch file</code></td><td>aggiorna timestamp; crea il file se non esiste</td></tr>
+        <tr><td><code>cat file…</code></td><td>concatena e stampa il contenuto</td></tr>
+        <tr><td><code>rm [-r] file…</code></td><td>rimuove file (<code>-r</code> per directory + contenuto)</td></tr>
+        <tr><td><code>less file</code></td><td>visualizza interattivamente "un po' alla volta"</td></tr>
+        <tr><td><code>head / tail</code></td><td>inizio/fine file (default 10 righe); <code>-n</code> righe, <code>-c</code> byte</td></tr>
+        <tr><td><code>su [user]</code></td><td>switch user (password dell'utente di destinazione; senza nome = root)</td></tr>
+        <tr><td><code>sudo [-u user] cmd</code></td><td>esegui come altro utente (password propria; serve gruppo <code>sudoers</code>)</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>Metacaratteri (wildcard)</h3>
+      <ul>
+        <li><code>*</code> zero+ caratteri · <code>?</code> un singolo carattere · <code>[a,b,c]</code> / <code>[a-z]</code> insieme.</li>
+      </ul>
+      <table class="tbl"><thead><tr><th>Pattern</th><th>Esempio match</th></tr></thead><tbody>
+        <tr><td><code>ls *.c</code></td><td>tutti i <code>.c</code></td></tr>
+        <tr><td><code>ls ?.?</code></td><td><code>a.c</code>, <code>a.h</code></td></tr>
+        <tr><td><code>ls a??.c</code></td><td><code>abc.c</code>, <code>axc.c</code></td></tr>
+        <tr><td><code>ls a[b-t]c.c</code></td><td><code>abc.c</code></td></tr>
+        <tr><td><code>ls a[4,f,x]c.c</code></td><td><code>axc.c</code></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>Redirezione I/O &amp; pipeline</h3>
+      <ul><li>Canali standard: <b>stdin</b> (tastiera), <b>stdout</b> (schermo), <b>stderr</b> (errori).</li></ul>
+      <table class="tbl"><thead><tr><th>Operatore</th><th>Effetto</th></tr></thead><tbody>
+        <tr><td><code>&gt; file</code></td><td>stdout → file (crea/sovrascrive)</td></tr>
+        <tr><td><code>&gt;&gt; file</code></td><td>stdout → file (append)</td></tr>
+        <tr><td><code>2&gt; file</code> / <code>2&gt;&gt;</code></td><td>stderr → file (sovrascrive / append)</td></tr>
+        <tr><td><code>&amp;&gt; file</code> / <code>&amp;&gt;&gt;</code></td><td>stdout + stderr → file</td></tr>
+        <tr><td><code>&lt; file</code></td><td>input da file</td></tr>
+        <tr><td><code>cmd1 | cmd2</code></td><td>stdout di cmd1 → stdin di cmd2 (pipe)</td></tr>
+      </tbody></table>
+      <div class="snippet"><div class="cap">esempi</div><pre><code class="c">ls -1 &gt; filelist.txt
+sort &lt; list.txt &gt; sortedlist.txt
+ls -l mydir | less
+cat *.txt | sort &gt; result-file
+comando &gt; out.txt 2&gt; errors.txt</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES2 ================= -->
+<section class="section" id="es2">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES2</span>
+    <span class="sec-title">Utenti, gruppi, permessi, editor<span>UID/GID, permessi r/w/x, chmod/chown, SUID/SGID, vi</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Utenti &amp; gruppi</h3>
+      <ul>
+        <li>Utente = <b>username + UID</b>. Gruppo = <b>group name + GID</b>. Ogni utente appartiene almeno al <b>primary group</b>.</li>
+      </ul>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><code>passwd</code></td><td>cambia password (usa il bit SUID)</td></tr>
+        <tr><td><code>id [user]</code></td><td>mostra UID, gruppo primario, altri gruppi</td></tr>
+        <tr><td><code>groups [user]</code></td><td>mostra i gruppi dell'utente</td></tr>
+        <tr><td><code>adduser user</code></td><td>crea nuovo utente (root)</td></tr>
+        <tr><td><code>deluser user</code></td><td>rimuove utente (root)</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>Permessi r / w / x</h3>
+      <table class="tbl"><thead><tr><th>Permesso</th><th>Su file</th><th>Su directory</th></tr></thead><tbody>
+        <tr><td><b>r</b></td><td>leggere il contenuto</td><td>elencare i file (<code>ls</code>)</td></tr>
+        <tr><td><b>w</b></td><td>modificare il contenuto</td><td>creare/rinominare/cancellare file</td></tr>
+        <tr><td><b>x</b></td><td>eseguire (binario/script)</td><td>attraversare (<code>cd</code>)</td></tr>
+      </tbody></table>
+      <div class="warn"><b>Attenzione:</b> <code>w</code> sul file <b>non</b> basta per cancellarlo: contano i permessi della <b>directory</b>.</div>
+      <ul>
+        <li><b>Classi:</b> owner → group owner → others. Si applica la prima classe a cui l'utente appartiene.</li>
+        <li><b>Output <code>ls -l</code>:</b> <code>-rw-r--r--</code> = [tipo][owner rwx][group rwx][others rwx].</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Notazione ottale</h3>
+      <ul><li><code>r=4</code>, <code>w=2</code>, <code>x=1</code> (sommare per ogni classe).</li></ul>
+      <table class="tbl"><thead><tr><th>Cifra</th><th>Bit</th><th>Esempio</th></tr></thead><tbody>
+        <tr><td><code>7</code></td><td>rwx (4+2+1)</td><td><code>777</code> = rwxrwxrwx</td></tr>
+        <tr><td><code>6</code></td><td>rw- (4+2)</td><td><code>644</code> = rw-r--r--</td></tr>
+        <tr><td><code>5</code></td><td>r-x (4+1)</td><td><code>750</code> = rwxr-x---</td></tr>
+        <tr><td><code>4</code> / <code>0</code></td><td>r-- / ---</td><td>—</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>chmod, chown, chgrp</h3>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><code>chmod 755 file</code></td><td>permessi in ottale</td></tr>
+        <tr><td><code>chmod [ugo][+-=][rwx]</code></td><td>simbolico — es. <code>chmod u+x f</code>, <code>chmod go-rwx f</code></td></tr>
+        <tr><td><code>chmod -R …</code></td><td>ricorsivo</td></tr>
+        <tr><td><code>chown user file</code></td><td>cambia proprietario (root)</td></tr>
+        <tr><td><code>chown user:group file</code></td><td>cambia owner + gruppo (root)</td></tr>
+        <tr><td><code>chgrp group file</code></td><td>cambia gruppo (utente solo se membro)</td></tr>
+      </tbody></table>
+      <p class="muted">simbolico: <b>who</b>=u/g/o · <b>how</b>=+/-/= · <b>which</b>=r/w/x</p>
+    </div>
+
+    <div class="block">
+      <h3>Permessi speciali SUID / SGID</h3>
+      <ul>
+        <li><b>SUID:</b> in esecuzione il processo acquisisce i privilegi del <b>proprietario</b> del file. Simbolo <code>s</code> al posto della <code>x</code> dell'owner — es. <code>-rwsr-xr-x</code> (<code>/usr/bin/passwd</code>).</li>
+        <li><b>SGID:</b> acquisisce i privilegi del <b>gruppo</b> proprietario. <code>s</code> nella x del gruppo.</li>
+        <li><b>Ottale:</b> cifra extra in testa, <code>4</code>=SUID, <code>2</code>=SGID. Es. <code>6754</code> → <code>rwsr-sr--</code>.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Editor vi / vim</h3>
+      <p><code>vi file</code> apre (crea se non esiste). Due modalità: <b>comandi</b> e <b>editing</b>.</p>
+      <table class="tbl"><thead><tr><th>Tasto</th><th>Azione</th></tr></thead><tbody>
+        <tr><td><span class="kbd">Esc</span></td><td>torna in modalità comandi</td></tr>
+        <tr><td><code>i</code> / <code>o</code></td><td>inserimento alla posizione / nuova riga dopo</td></tr>
+        <tr><td><code>x</code> / <code>r?</code></td><td>cancella carattere / sostituisci con <code>?</code></td></tr>
+        <tr><td><code>u</code></td><td>annulla ultimo comando</td></tr>
+        <tr><td><code>dd</code> / <code>ndd</code></td><td>cancella riga / n righe</td></tr>
+        <tr><td><code>yy</code> / <code>nyy</code> / <code>p</code></td><td>copia riga / n righe / incolla</td></tr>
+        <tr><td><code>/word</code> · <code>n</code> · <code>N</code></td><td>cerca · occorrenza succ. · prec.</td></tr>
+        <tr><td><code>:w</code> <code>:q</code> <code>:wq</code> <code>:q!</code></td><td>salva · esci · salva+esci · esci senza salvare</td></tr>
+      </tbody></table>
+      <p class="muted">Altri editor: <code>gedit</code>, <code>kate</code>, <code>gvim</code>, <code>kvim</code>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES3 ================= -->
+<section class="section" id="es3">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES3</span>
+    <span class="sec-title">File di configurazione utenti/gruppi<span>/etc/passwd · shadow · group · gshadow, gpasswd, newgrp</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>/etc/passwd <span class="muted">(info pubbliche utenti — <code>man 5 passwd</code>, editor <code>vipw</code>)</span></h3>
+      <div class="snippet"><pre><code class="c">studenti:x:1000:1000:,,,:/home/studenti:/bin/bash
+username:password:UID:GID:gecos:home:shell</code></pre></div>
+      <table class="tbl"><thead><tr><th>Campo</th><th>Significato</th></tr></thead><tbody>
+        <tr><td>username</td><td>nome di login</td></tr>
+        <tr><td>password</td><td><code>x</code> → la password è in <code>/etc/shadow</code></td></tr>
+        <tr><td>UID / GID</td><td>user ID / group ID primario</td></tr>
+        <tr><td>gecos</td><td>nome completo + info</td></tr>
+        <tr><td>home / shell</td><td>home dir (<code>$HOME</code>) / interprete. <code>/sbin/nologin</code>·<code>/bin/false</code> = no login</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>/etc/shadow <span class="muted">(password cifrate — <code>man 5 shadow</code>, editor <code>vipw -s</code>)</span></h3>
+      <div class="snippet"><pre><code class="c">studenti:$6$pq7nq6yL$Jgf...Oo.:17102:0:99999:7:::
+username:hash(salt+pwd):ult.modifica:age_min:age_max:avviso:inattività:scadenza:riservato</code></pre></div>
+      <ul>
+        <li><b>ult.modifica</b> = giorni dal 1970 · <b>age_min/max</b> = durata min/max password · <b>avviso</b> = giorni prima della scadenza · <b>inattività</b>/<b>scadenza</b> account.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Gestione gruppi</h3>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><code>addgroup / delgroup g</code></td><td>crea / rimuove gruppo (root)</td></tr>
+        <tr><td><code>gpasswd -a user g</code></td><td>aggiunge utente al gruppo</td></tr>
+        <tr><td><code>gpasswd -d user g</code></td><td>rimuove utente dal gruppo</td></tr>
+        <tr><td><code>gpasswd -M u1,u2 g</code></td><td>definisce i membri</td></tr>
+        <tr><td><code>gpasswd -A u1,u2 g</code></td><td>definisce gli amministratori</td></tr>
+        <tr><td><code>gpasswd g</code> / <code>-r g</code></td><td>imposta / rimuove password gruppo</td></tr>
+        <tr><td><code>newgrp g</code></td><td>rende <code>g</code> primary group per la sessione</td></tr>
+      </tbody></table>
+      <p class="muted">Solo gli amministratori (oltre root) aggiungono/rimuovono utenti; solo root gli amministratori. Password di gruppo poco sicure.</p>
+    </div>
+
+    <div class="block">
+      <h3>/etc/group &amp; /etc/gshadow</h3>
+      <div class="snippet"><div class="cap">/etc/group — <code>man 5 group</code>, editor <code>vigr</code></div><pre><code class="c">informatica:x:1005:alice,giovanni
+groupname:password:GID:lista_utenti</code></pre></div>
+      <div class="snippet"><div class="cap">/etc/gshadow — <code>man 5 gshadow</code>, editor <code>vigr -s</code></div><pre><code class="c">informatica:pwd_cifrata:alice:alice,giovanni
+groupname:password:amministratori:altri_utenti</code></pre></div>
+      <p class="muted">In <code>group</code> la <code>lista_utenti</code> non include chi ha il gruppo come primario. In <code>gshadow</code> password vuota/<code>*</code>/<code>!</code> = nessuna (solo membri hanno privilegi).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES4 ================= -->
+<section class="section" id="es4">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES4</span>
+    <span class="sec-title">Ricerca &amp; archiviazione<span>find, grep + regex, tar / gzip / bzip2</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>find <span class="muted"><code>find [path…] [espressione]</code></span></h3>
+      <p>Espressione = <b>test</b> (proprietà) + <b>azioni</b> + opzioni. Operatori: <code>-a</code> AND (implicito), <code>-o</code> OR, <code>!</code> NOT.</p>
+      <table class="tbl"><thead><tr><th>Test</th><th>Significato</th></tr></thead><tbody>
+        <tr><td><code>-name pattern</code></td><td>per nome (wildcard <code>* ? []</code>)</td></tr>
+        <tr><td><code>-type d|f|l</code></td><td>directory / file regolare / symbolic link</td></tr>
+        <tr><td><code>-size [+-]n[ckMG]</code></td><td>dimensione (<code>+</code> maggiore, <code>-</code> minore)</td></tr>
+        <tr><td><code>-user u</code> / <code>-group g</code></td><td>proprietario / gruppo</td></tr>
+        <tr><td><code>-perm mode</code></td><td>esatti · <code>-mode</code> almeno tutti · <code>/mode</code> almeno uno</td></tr>
+      </tbody></table>
+      <table class="tbl"><thead><tr><th>Azione</th><th>Significato</th></tr></thead><tbody>
+        <tr><td><code>-delete</code></td><td>cancella i file trovati (occhio all'ordine!)</td></tr>
+        <tr><td><code>-exec cmd {} \;</code></td><td>esegue cmd; <code>{}</code> = file corrente, <code>\;</code> termina</td></tr>
+        <tr><td><code>-execdir</code></td><td>esegue dalla directory del file trovato</td></tr>
+      </tbody></table>
+      <div class="snippet"><div class="cap">esempi</div><pre><code class="c">find path -name 'prova*' ! -type d         # nome "prova*", non directory
+find path ! -name '*.csv' -size +50M -execdir ls -l {} \;
+find path -perm -664                         # almeno rw-rw-r--
+find path -perm /u=w,g=w                      # owner O group scrivono
+find /usr/bin -perm -4000                     # file con SUID attivo</code></pre></div>
+      <div class="tip"><b>Metacaratteri:</b> proteggili dalla shell con apici <code>'…'</code> o escape <code>\</code>.</div>
+    </div>
+
+    <div class="block">
+      <h3>grep <span class="muted"><code>grep [opz] [-e] modello file…</code></span></h3>
+      <table class="tbl"><thead><tr><th>Opz.</th><th>Effetto</th></tr></thead><tbody>
+        <tr><td><code>-i</code></td><td>ignora maiuscole/minuscole</td></tr>
+        <tr><td><code>-v</code></td><td>righe che NON corrispondono</td></tr>
+        <tr><td><code>-n</code> / <code>-c</code></td><td>numero di riga / solo conteggio</td></tr>
+        <tr><td><code>-w</code> / <code>-x</code></td><td>parole intere / righe intere</td></tr>
+        <tr><td><code>-e</code></td><td>più modelli</td></tr>
+      </tbody></table>
+      <table class="tbl"><thead><tr><th>Regex</th><th>Significato</th></tr></thead><tbody>
+        <tr><td><code>^</code> / <code>$</code></td><td>inizio / fine riga (<code>^$</code> = riga vuota)</td></tr>
+        <tr><td><code>.</code></td><td>qualsiasi carattere</td></tr>
+        <tr><td><code>*</code></td><td>il precedente 0+ volte</td></tr>
+        <tr><td><code>[abc]</code> / <code>[a-z]</code></td><td>insieme di caratteri</td></tr>
+        <tr><td><code>\</code></td><td>escape</td></tr>
+      </tbody></table>
+      <div class="snippet"><div class="cap">esempi</div><pre><code class="c">grep '1[23]:[0-5][0-9]' file     # orari 12/13:00-59
+grep -w 'word' file               # "word" come parola intera
+grep '^[0-9].*\.$' file           # inizia con cifra, finisce con punto</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>tar &amp; compressione <span class="muted"><code>tar modalità[opz] [file…]</code></span></h3>
+      <table class="tbl"><thead><tr><th>Modalità / Opzione</th><th>Significato</th></tr></thead><tbody>
+        <tr><td><code>c</code> / <code>x</code> / <code>t</code></td><td>crea / estrai / elenca contenuto</td></tr>
+        <tr><td><code>r</code> / <code>u</code> / <code>A</code> / <code>d</code></td><td>aggiungi / aggiorna se diverso / unisci archivi / differenze</td></tr>
+        <tr><td><code>v</code> / <code>f</code></td><td>verbose / nome archivio</td></tr>
+        <tr><td><code>z</code> / <code>j</code></td><td>gzip (.tar.gz) / bzip2 (.tar.bz2)</td></tr>
+        <tr><td><code>-C dir</code></td><td>estrai nella directory indicata</td></tr>
+      </tbody></table>
+      <div class="snippet"><div class="cap">esempi</div><pre><code class="c">tar cvf archivio.tar percorso        # crea
+tar czf archivio.tar.gz percorso     # crea + gzip
+tar tf archivio.tar                   # elenca
+tar xvf archivio.tar -C directory     # estrai in directory</code></pre></div>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><code>gzip</code> / <code>gunzip</code></td><td>comprime/estrae <code>.gz</code> (sostituisce l'originale)</td></tr>
+        <tr><td><code>bzip2</code> / <code>bunzip2</code></td><td>comprime/estrae <code>.bz2</code></td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES5 ================= -->
+<section class="section" id="es5">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES5</span>
+    <span class="sec-title">Processi (I): fork / exec / wait<span>modello a processi, PCB, creazione e terminazione</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Modello a processi</h3>
+      <ul>
+        <li>OS <b>multiprogrammato</b> a processi, <b>time-sharing</b>. Address space: <b>dati privati</b>, <b>codice condivisibile</b>. Comunicazione via scambio di messaggi.</li>
+        <li><b>Stati:</b> pronto (ready) · running · sleep/bloccato · zombie (terminato, padre non ha fatto <code>wait</code>) · swapped · init.</li>
+        <li><b>PCB:</b> <b>Process Structure</b> (sempre in memoria: PID, stato, PPID, priorità, riferimenti a dati/stack/codice) + <b>User Structure</b> (swap-out durante sleep: copia registri, dir corrente, owner, argc/argv…).</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Creazione: fork, getpid</h3>
+      <div class="snippet"><pre><code class="c">pid_t fork(void);     // 0 al figlio, PID del figlio (&gt;0) al padre, &lt;0 errore
+pid_t getpid(void);   // PID del processo corrente
+pid_t getppid(void);  // PID del padre</code></pre></div>
+      <ul><li>Il figlio condivide il codice ed eredita una <b>copia</b> di dati globali, stack, heap, User Structure (stesso PC iniziale). Comportamento differenziato dal valore di ritorno.</li></ul>
+    </div>
+
+    <div class="block">
+      <h3>Terminazione: exit, wait</h3>
+      <div class="snippet"><pre><code class="c">void  exit(int status);     // terminazione volontaria (status 0-255 al padre)
+pid_t wait(int *status);    // padre attende un figlio; ritorna PID o -1</code></pre></div>
+      <ul>
+        <li><code>wait</code>: sospende se tutti i figli sono in esecuzione · ritorna subito se c'è uno zombie · errore se nessun figlio.</li>
+        <li>Terminazione <b>volontaria</b> (ultima istruzione / <code>exit</code>) o <b>involontaria</b> (azione illegale, es. segmentation fault / segnale).</li>
+      </ul>
+      <div class="snippet"><div class="cap">macro per status — &lt;sys/wait.h&gt;</div><pre><code class="c">WIFEXITED(status)    // vero se terminazione volontaria
+WEXITSTATUS(status)  // estrae l'exit code</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Sostituzione codice: famiglia exec</h3>
+      <p>Sostituisce codice e dati del processo. Lista argomenti terminata da <code>NULL</code>. Non ritorna se ha successo (ritorna solo in caso di errore).</p>
+      <div class="snippet"><pre><code class="c">int execl (char* path, char* arg0, ..., (char*)0);
+int execv (char* path, char* argv[]);
+int execle(char* path, char* arg0, ..., (char*)0, char* envp[]);
+int execve(char* path, char* argv[], char* envp[]);
+int execlp(char* file, char* arg0, ..., (char*)0);
+int execvp(char* file, char* argv[]);</code></pre></div>
+      <p class="muted"><b>l</b>=lista arg · <b>v</b>=vettore argv · <b>e</b>=environment · <b>p</b>=cerca nel PATH.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES6 ================= -->
+<section class="section" id="es6">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES6</span>
+    <span class="sec-title">Processi (II): segnali<span>signal/kill/pause/alarm/sleep, ps, kill da terminale</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Concetti</h3>
+      <ul>
+        <li>Segnali = <b>interrupt software</b>, notifica eventi <b>asincroni</b> tra processi (o OS→processo).</li>
+        <li>Alla ricezione: <b>1)</b> handler definito dal programmatore, <b>2)</b> azione di default, <b>3)</b> ignorato.</li>
+        <li>Esecuzione interrotta → handler → ripresa dall'istruzione successiva. Riferimento <code>man 7 signal</code>.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Segnali principali</h3>
+      <table class="tbl"><thead><tr><th>Segnale</th><th>#</th><th>Descrizione</th></tr></thead><tbody>
+        <tr><td>SIGHUP</td><td>1</td><td>terminale chiuso</td></tr>
+        <tr><td>SIGINT</td><td>2</td><td>interruzione (<span class="kbd">Ctrl+C</span>)</td></tr>
+        <tr><td>SIGQUIT</td><td>3</td><td>interruzione + core dump (<span class="kbd">Ctrl+\</span>)</td></tr>
+        <tr><td>SIGKILL</td><td>9</td><td>termina subito (<b>non</b> ignorabile, no cleanup)</td></tr>
+        <tr><td>SIGUSR1 / SIGUSR2</td><td>10 / 12</td><td>user-defined (default: termina)</td></tr>
+        <tr><td>SIGSEGV</td><td>11</td><td>errore di segmentazione</td></tr>
+        <tr><td>SIGALRM</td><td>14</td><td>timer scaduto</td></tr>
+        <tr><td>SIGTERM</td><td>15</td><td>richiesta di terminazione</td></tr>
+        <tr><td>SIGCHLD</td><td>17</td><td>figlio terminato/fermato (ignorato di default)</td></tr>
+        <tr><td>SIGCONT</td><td>18</td><td>continua se fermo</td></tr>
+        <tr><td>SIGSTOP</td><td>19</td><td>ferma esecuzione (<b>non</b> ignorabile)</td></tr>
+        <tr><td>SIGTSTP</td><td>20</td><td>sospendi (<span class="kbd">Ctrl+Z</span>)</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>System call</h3>
+      <div class="snippet"><pre><code class="c">typedef void (*sighandler_t)(int);
+sighandler_t signal(int sig, sighandler_t handler);  // SIG_IGN / SIG_DFL / SIG_ERR
+int kill(pid_t pid, int sig);   // invia un segnale
+int pause(void);                // sleep fino a un segnale
+unsigned int sleep(unsigned int seconds);   // o segnale non ignorato → resto
+unsigned int alarm(unsigned int seconds);   // programma SIGALRM (0 = annulla)</code></pre></div>
+      <ul>
+        <li><code>signal</code>: handler <code>void h(int sig)</code>; il figlio eredita le associazioni, <code>exec</code> non le mantiene.</li>
+      </ul>
+      <table class="tbl"><thead><tr><th><code>kill</code> pid</th><th>Destinatari</th></tr></thead><tbody>
+        <tr><td><code>&gt; 0</code></td><td>il processo <code>pid</code></td></tr>
+        <tr><td><code>== 0</code></td><td>tutti i processi dello stesso process group</td></tr>
+        <tr><td><code>== -1</code></td><td>tutti i processi a cui il chiamante può inviare</td></tr>
+        <tr><td><code>&lt; -1</code></td><td>i processi con PGID = <code>-pid</code></td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>Da terminale: kill, ps</h3>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><code>kill [-SIG] pid</code></td><td>invia segnale (default SIGTERM); <code>-l</code> lista segnali</td></tr>
+        <tr><td><code>ps</code></td><td>snapshot dei processi</td></tr>
+        <tr><td><code>ps -u user</code> / <code>u</code></td><td>per utente / formato con risorse</td></tr>
+        <tr><td><code>ps a</code> / <code>x</code></td><td>tutti gli utenti / anche senza terminale</td></tr>
+        <tr><td><code>ps o</code> / <code>-O</code></td><td>solo campi indicati / campi indicati + default</td></tr>
+      </tbody></table>
+      <p class="muted">Stati: <code>S</code> sleep · <code>T</code> bloccato · <code>R</code> running · <code>Z</code> zombie.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES7 ================= -->
+<section class="section" id="es7">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES7</span>
+    <span class="sec-title">Processi (III): gerarchia &amp; job control<span>init, ID, RUID/EUID, gruppi, nice, fg/bg, top</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Gerarchia &amp; identificatori</h3>
+      <ul>
+        <li><b>init</b>: primo processo (PID 1), avviato dal kernel; tutti discendono da lui; adotta gli orfani. Debian/Ubuntu = <b>systemd</b>. Albero: <code>pstree</code>.</li>
+      </ul>
+      <div class="snippet"><pre><code class="c">pid_t getpid();  getppid();  getpgrp();   // PID, PPID, Process Group ID
+uid_t getuid();  getgid();                 // Real UID / GID
+uid_t geteuid(); getegid();                // Effective UID / GID</code></pre></div>
+      <ul>
+        <li><b>RUID/RGID</b> = utente/gruppo che ha lanciato il processo. <b>EUID/EGID</b> = determinano i <b>privilegi</b> di accesso; differiscono dai reali se il comando ha bit <b>SUID/SGID</b>.</li>
+        <li><b>Invio segnali consentito</b> se l'EUID o RUID del mittente coincide con il RUID del destinatario.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Gruppi di processi &amp; priorità</h3>
+      <ul>
+        <li>Nuovo processo da terminale → nuovo process group; i figli ereditano il gruppo del padre (preservato da <code>exec</code>). Base del job-control.</li>
+        <li><b>nice</b> (priorità): intervallo <code>[-20, 19]</code>, valore alto = priorità bassa. Root può abbassarla; l'utente può solo aumentarla sui propri processi.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Job control (shell)</h3>
+      <ul><li>Un <b>job</b> = un comando/pipeline; ha un Job ID; lista con <code>jobs</code>.</li>
+      <li><b>Foreground</b>: ha stdin/out/err e il controllo del terminale. <b>Background</b> (<code>cmd &amp;</code>): nessun stdin, torni alla shell.</li></ul>
+      <table class="tbl"><thead><tr><th>Comando</th><th>Funzione</th></tr></thead><tbody>
+        <tr><td><span class="kbd">Ctrl+Z</span></td><td>ferma il foreground (SIGTSTP)</td></tr>
+        <tr><td><code>fg %JOB</code> / <code>bg %JOB</code></td><td>riprendi in foreground / background</td></tr>
+        <tr><td><code>kill %JOB</code> / <code>kill -n SIG %JOB</code></td><td>invia segnale al job</td></tr>
+        <tr><td><code>nohup cmd</code></td><td>immune a SIGHUP; output su <code>nohup.out</code></td></tr>
+        <tr><td><code>disown %JOB</code></td><td>immune a SIGHUP, rimosso dalla tabella job</td></tr>
+        <tr><td><code>nice -n val cmd &amp;</code></td><td>esegui con niceness</td></tr>
+        <tr><td><code>renice val PID</code></td><td>cambia niceness a processo in esecuzione</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>top <span class="muted">(monitor interattivo, ordinato per CPU)</span></h3>
+      <table class="tbl"><thead><tr><th>Tasto</th><th>Azione</th></tr></thead><tbody>
+        <tr><td><code>h</code></td><td>help</td></tr>
+        <tr><td><code>d</code></td><td>delay (intervallo aggiornamento)</td></tr>
+        <tr><td><code>k</code> / <code>r</code></td><td>invia segnale / renice a un processo</td></tr>
+        <tr><td><code>n</code> / <code>u</code></td><td>numero processi / filtra per utente</td></tr>
+        <tr><td><code>q</code></td><td>esci</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES8 ================= -->
+<section class="section" id="es8">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES8</span>
+    <span class="sec-title">Thread POSIX (I): pthreads &amp; mutex<span>create/exit/join, mutex e sezioni critiche</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Concetti</h3>
+      <ul>
+        <li><b>Thread</b> = flusso di esecuzione indipendente dentro un processo; più thread <b>condividono</b> risorse e address space ("processi leggeri").</li>
+        <li><b>Pro:</b> creazione e context switch più leggeri, interazione via risorse comuni. <b>Contro:</b> serve gestire la concorrenza (codice <b>thread-safe</b>, mutua esclusione).</li>
+        <li>Linux: thread nativi a livello kernel = unità di scheduling. Processo tradizionale = thread che non condivide nulla.</li>
+      </ul>
+      <div class="snippet"><div class="cap">libreria &amp; compilazione</div><pre><code class="c">#include &lt;pthread.h&gt;
+gcc file.c -lpthread            // Debian: -lpthread -std=c99</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Identificatori</h3>
+      <div class="snippet"><pre><code class="c">pthread_t pthread_self(void);                       // ID thread corrente (tipo opaco)
+int pthread_equal(pthread_t t1, pthread_t t2);      // confronto
+int gettid(void);    // TID Linux-specific (== PID se thread unico) — non portabile</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Creazione, terminazione, join</h3>
+      <div class="snippet"><pre><code class="c">int pthread_create(pthread_t* thread, const pthread_attr_t* attr,
+                   void* (*start_routine)(void*), void* arg);  // 0 = ok
+void pthread_exit(void* retval);                    // termina il thread
+int  pthread_join(pthread_t thread, void** retval); // attende un thread</code></pre></div>
+      <ul>
+        <li>Il programma parte con il <b>main thread</b> (esegue <code>main</code>) che può creare gli altri.</li>
+        <li>Se il <code>main</code> termina <b>senza</b> <code>pthread_exit</code> → i figli muoiono; con <code>pthread_exit</code> → i figli continuano.</li>
+        <li><code>pthread_join</code>: si blocca finché il thread indicato termina; <code>retval</code> riceve quanto passato a <code>pthread_exit</code> (o <code>NULL</code>).</li>
+      </ul>
+      <div class="snippet"><div class="cap">esempio</div><pre><code class="c">void* tr_code(void* arg) {
+    printf("Hello World! My arg is %d\n", *(int*)arg);
+    free(arg);
+    pthread_exit(NULL);
+}
+int main() {
+    pthread_t tr1;
+    int* a = malloc(sizeof(int)); *a = 1;
+    if (pthread_create(&amp;tr1, NULL, tr_code, a)) exit(-1);
+    pthread_exit(NULL);   // così tr1 continua a girare
+}</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Mutex (mutua esclusione)</h3>
+      <p>Astrazione tipo semaforo binario: protegge le variabili condivise. <code>pthread_mutex_t</code> rappresenta stato (libero/occupato) + coda di attesa.</p>
+      <div class="snippet"><pre><code class="c">pthread_mutex_t M;
+int pthread_mutex_init(pthread_mutex_t* M, const pthread_mutexattr_t* attr);
+int pthread_mutex_lock(pthread_mutex_t* M);    // wait
+int pthread_mutex_unlock(pthread_mutex_t* M);  // signal</code></pre></div>
+      <div class="snippet"><div class="cap">pattern sezione critica</div><pre><code class="c">pthread_mutex_init(&amp;M, NULL);
+pthread_mutex_lock(&amp;M);
+/* ... sezione critica: accesso alla risorsa condivisa ... */
+pthread_mutex_unlock(&amp;M);</code></pre></div>
+      <p class="muted">Senza mutex: incrementare una variabile globale da più thread → <b>race condition</b> (risultato non deterministico).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES9 ================= -->
+<section class="section" id="es9">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES9</span>
+    <span class="sec-title">Thread POSIX (II): condition variables<span>wait/signal/broadcast, produttore-consumatore</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Variabili condizione</h3>
+      <p>Coda dove i thread si <b>sospendono volontariamente</b> in attesa di una condizione logica (basata su risorse condivise → verificata in mutua esclusione).</p>
+      <div class="snippet"><pre><code class="c">pthread_cond_t C;
+int pthread_cond_init(pthread_cond_t* C, pthread_cond_attr_t* attr);
+int pthread_cond_wait(pthread_cond_t* C, pthread_mutex_t* M); // sospende, rilascia M; al risveglio riacquisisce M
+int pthread_cond_signal(pthread_cond_t* C);     // risveglia almeno un thread
+int pthread_cond_broadcast(pthread_cond_t* C);  // risveglia tutti</code></pre></div>
+      <div class="warn"><b>Sempre <code>while</code>, mai <code>if</code></b> sulla condizione: la <code>signal</code> pthread è "<b>signal &amp; continue</b>" → il risvegliato non acquisisce il lock atomicamente, la condizione va <b>ri-verificata</b>.
+        <pre style="margin-top:6px"><code class="c">while (condizione_logica)
+    pthread_cond_wait(&amp;C, &amp;M);</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Esempio: produttore / consumatore</h3>
+      <div class="snippet"><div class="cap">risorsa condivisa (buffer circolare)</div><pre><code class="c">typedef struct {
+    int buffer[BUFFER_SIZE];
+    int readInd, writeInd, cont;   // indici + n. elementi
+    pthread_mutex_t M;
+    pthread_cond_t FULL, EMPTY;
+} risorsa;
+risorsa r;
+// init: mutex_init(&amp;r.M); cond_init(&amp;r.FULL); cond_init(&amp;r.EMPTY);
+//       r.readInd = r.writeInd = r.cont = 0;</code></pre></div>
+      <div class="snippet"><div class="cap">consumatore</div><pre><code class="c">pthread_mutex_lock(&amp;r.M);
+while (r.cont == 0)                       // buffer vuoto?
+    pthread_cond_wait(&amp;r.EMPTY, &amp;r.M);
+val = r.buffer[r.readInd];
+r.cont--;
+r.readInd = (r.readInd + 1) % BUFFER_SIZE;
+pthread_cond_signal(&amp;r.FULL);            // risveglia un produttore
+pthread_mutex_unlock(&amp;r.M);</code></pre></div>
+      <div class="snippet"><div class="cap">produttore</div><pre><code class="c">pthread_mutex_lock(&amp;r.M);
+while (r.cont == BUFFER_SIZE)             // buffer pieno?
+    pthread_cond_wait(&amp;r.FULL, &amp;r.M);
+r.buffer[r.writeInd] = val;
+r.cont++;
+r.writeInd = (r.writeInd + 1) % BUFFER_SIZE;
+pthread_cond_signal(&amp;r.EMPTY);           // risveglia un consumatore
+pthread_mutex_unlock(&amp;r.M);</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Esempio: accesso limitato (max MAX_T thread)</h3>
+      <div class="snippet"><pre><code class="c">#define MAX_T 10
+int n_users = 0;
+pthread_cond_t FULL; pthread_mutex_t M;
+
+// INGRESSO
+pthread_mutex_lock(&amp;M);
+while (n_users == MAX_T) pthread_cond_wait(&amp;FULL, &amp;M);
+n_users++;
+pthread_mutex_unlock(&amp;M);
+/* ... uso della risorsa ... */
+// USCITA
+pthread_mutex_lock(&amp;M);
+n_users--;
+pthread_cond_signal(&amp;FULL);
+pthread_mutex_unlock(&amp;M);</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES10 ================= -->
+<section class="section" id="es10">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES10</span>
+    <span class="sec-title">VFS, file descriptor &amp; pipe<span>i-node, link, open/read/write, eredità fd con fork, pipe</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Filesystem &amp; i-node</h3>
+      <ul>
+        <li>Tutto è file: <b>ordinario</b> (dati su memoria di massa), <b>speciale</b> (dispositivo), <b>directory</b> (insieme di file).</li>
+        <li><b>i-node</b> = descrittore del file (tipo, permessi owner/group, dimensione, n. <b>link</b>, vettori di indirizzamento). <b>i-list</b> = lista degli i-node su disco; <b>i-number</b> = identificatore.</li>
+        <li><b>Directory</b> = record <code>&lt;nome_file, i-number&gt;</code>. L'i-node è eliminato solo quando il n. di hard link = 0.</li>
+      </ul>
+    </div>
+
+    <div class="block">
+      <h3>Link (ln)</h3>
+      <table class="tbl"><thead><tr><th>Tipo</th><th>Comando</th><th>Comportamento</th></tr></thead><tbody>
+        <tr><td><b>hard link</b></td><td><code>ln target nome</code></td><td>nome alternativo per lo <b>stesso i-node</b>; cancellarne uno non tocca gli altri</td></tr>
+        <tr><td><b>soft / symbolic</b></td><td><code>ln -s target nome</code></td><td>punta a un hard link; se l'hard link sparisce, il soft link non accede più</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="block">
+      <h3>Strutture dati per l'accesso</h3>
+      <ul>
+        <li><b>User Structure</b> (del processo) → <b>Tabella file aperti di processo</b> (i <b>file descriptor</b>) → <b>Tabella file aperti di sistema</b> (un elemento per file aperto, con <b>I/O pointer</b> + riferimento i-node) → <b>Tabella file attivi</b> (i-node in memoria).</li>
+        <li>Ogni file aperto ha un <b>I/O pointer</b>: read/write lo fanno avanzare (accesso sequenziale).</li>
+        <li><b>Standard fd</b>: STDIN, STDOUT, STDERR aperti automaticamente.</li>
+      </ul>
+      <div class="note"><b>fork &amp; file descriptor:</b> il figlio eredita una copia dei fd che puntano allo <b>stesso</b> elemento della tabella di sistema → padre e figlio <b>condividono l'I/O pointer</b>.</div>
+    </div>
+
+    <div class="block">
+      <h3>Primitive (non bufferizzate)</h3>
+      <div class="snippet"><pre><code class="c">int     open(const char* path, int flags);   // ritorna fd (&lt;0 = errore)
+ssize_t read (int fd, void* buf, size_t count);        // n. byte letti
+ssize_t write(int fd, const void* buf, size_t count);  // n. byte scritti
+int     close(int fd);</code></pre></div>
+      <p><b>flags</b> (<code>&lt;fcntl.h&gt;</code>, combinabili con OR): <code>O_RDONLY</code>, <code>O_WRONLY</code>, <code>O_RDWR</code>, <code>O_APPEND</code> (dalla fine), <code>O_CREAT</code>. Lista: <code>man 2 open</code>.</p>
+      <div class="snippet"><div class="cap">lettura file con buffer fisso</div><pre><code class="c">int fd = open(argv[1], O_RDONLY);
+if (fd &lt; 0) { perror("Errore open"); exit(-1); }
+char buffer[BUF_SIZE];
+ssize_t nread;
+while ((nread = read(fd, buffer, BUF_SIZE-1)) &gt; 0) {
+    buffer[nread] = '\0';
+    printf("%s", buffer);
+}
+close(fd);</code></pre></div>
+      <p class="muted">La libreria C standard offre l'equivalente <b>bufferizzato</b>: <code>fopen/fread/fwrite/fclose</code>, <code>fscanf/fprintf</code>.</p>
+    </div>
+
+    <div class="block">
+      <h3>Pipe</h3>
+      <ul>
+        <li>IPC a <b>comunicazione indiretta</b> (mailbox FIFO), <b>canale monodirezionale</b> con due estremi (lettura/scrittura), ognuno con un fd.</li>
+        <li>Sincronizzazione automatica: il lettore si blocca se la pipe è vuota, lo scrittore se è piena.</li>
+        <li>Con <code>fork</code> i figli ereditano i fd → comunicano con padre/fratelli. (Tra processi non imparentati: socket.)</li>
+      </ul>
+      <div class="snippet"><pre><code class="c">int pipe(int fd[2]);   // 0 = ok, -1 = errore
+// fd[0] = lettura,  fd[1] = scrittura</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ES11 ================= -->
+<section class="section" id="es11">
+  <h2 class="sec-head"><span class="chev">▾</span><span class="sec-num">ES11</span>
+    <span class="sec-title">Pilotare applicazioni<span>dup2, redirezione std fd, pipe + fork + exec</span></span></h2>
+  <div class="section-body">
+
+    <div class="block">
+      <h3>Standard fd &amp; dup2</h3>
+      <ul><li>Macro in <code>&lt;unistd.h&gt;</code>: <code>STDIN_FILENO</code> (0), <code>STDOUT_FILENO</code> (1), <code>STDERR_FILENO</code> (2).</li></ul>
+      <div class="snippet"><pre><code class="c">int dup2(int target, int newfd);
+// chiude newfd (se aperto) e ne fa una copia di target  → &lt;0 errore</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Redirezione: stdout del figlio → pipe</h3>
+      <div class="snippet"><pre><code class="c">int pipe_fd[2];
+pipe(pipe_fd);
+if (fork() == 0) {                  // figlio
+    close(pipe_fd[0]);              // chiude la lettura
+    dup2(pipe_fd[1], STDOUT_FILENO);// stdout → pipe
+    execl("/bin/ls", "ls", "-l", NULL);
+}
+// padre: close(pipe_fd[1]); legge da pipe_fd[0]</code></pre></div>
+    </div>
+
+    <div class="block">
+      <h3>Pattern: "pilotare" un'applicazione non modificabile</h3>
+      <p>App che legge da STDIN e scrive su STDOUT. Strategia: <b>2 pipe</b> + <code>fork</code> + <code>dup2</code> di stdin/stdout + <code>execl</code>; il padre la guida con write/read.</p>
+      <div class="snippet"><div class="cap">figlio = l'applicazione</div><pre><code class="c">int FtS[2], StF[2];     // father→son, son→father
+pipe(FtS); pipe(StF);
+if (fork() == 0) {                      // figlio
+    close(FtS[1]); close(StF[0]);       // chiude estremi inutilizzati
+    dup2(FtS[0], STDIN_FILENO);  close(FtS[0]);   // stdin  ← FtS
+    dup2(StF[1], STDOUT_FILENO); close(StF[1]);   // stdout → StF
+    execl(path_app, nome_app, NULL);
+}</code></pre></div>
+      <div class="snippet"><div class="cap">padre = pilota</div><pre><code class="c">close(FtS[0]); close(StF[1]);
+char sendbuf[1024], recvbuf[1024];
+sprintf(sendbuf, "...\n");                       // '\n' = invio!
+write(FtS[1], sendbuf, strlen(sendbuf));         // manda al figlio
+int nread = read(StF[0], recvbuf, sizeof(recvbuf)-1);  // bloccante
+recvbuf[nread] = '\0';
+printf("%s", recvbuf);</code></pre></div>
+      <div class="tip"><b>Il <code>\n</code> è fondamentale</b> (rappresenta l'invio per l'applicazione). Buffer separati per invio/ricezione; <code>read</code> è bloccante. Variante d'esercizio: usare <code>bc</code> al posto dell'app (<code>man bc</code> / <code>bc -h</code>).</div>
+    </div>
+  </div>
+</section>
+
+<div class="noresult" id="noresult">Nessun risultato per la ricerca.</div>
+<footer>Riassunto schematico delle slide del Laboratorio di Sistemi Operativi (es1–es11, A.A. 2023/24). Generato per studio personale.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document;
+  var main = doc.getElementById('main');
+  var sections = Array.prototype.slice.call(doc.querySelectorAll('.section'));
+  var navLinks = Array.prototype.slice.call(doc.querySelectorAll('#nav a'));
+
+  /* ---------- syntax highlight (C) ---------- */
+  var KW = /^(return|if|else|while|for|do|switch|case|break|continue|goto|sizeof|typedef|struct|union|enum)$/;
+  var TY = /^(void|int|char|unsigned|signed|long|short|float|double|const|static|pid_t|size_t|ssize_t|uid_t|gid_t|pthread_t|pthread_mutex_t|pthread_cond_t|pthread_attr_t|pthread_mutexattr_t|pthread_cond_attr_t|sighandler_t|risorsa|FILE)$/;
+  function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  var RX = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(#\s*[a-zA-Z]+)|([A-Za-z_][A-Za-z0-9_]*)|(\b\d+\b)/g;
+  function highlight(code){
+    var out='', last=0, m;
+    RX.lastIndex=0;
+    while((m=RX.exec(code))){
+      out += esc(code.slice(last, m.index));
+      last = RX.lastIndex;
+      if(m[1]){ out += '<span class="tok-com">'+esc(m[1])+'</span>'; }
+      else if(m[2]){ out += '<span class="tok-str">'+esc(m[2])+'</span>'; }
+      else if(m[3]){ out += '<span class="tok-pre">'+esc(m[3])+'</span>'; }
+      else if(m[4]){
+        var w=m[4], cls='';
+        if(KW.test(w)) cls='tok-kw';
+        else if(TY.test(w)) cls='tok-ty';
+        else {
+          var after = code.slice(RX.lastIndex);
+          if(/^\s*\(/.test(after)) cls='tok-fn';
+        }
+        out += cls ? '<span class="'+cls+'">'+esc(w)+'</span>' : esc(w);
+      }
+      else if(m[5]){ out += '<span class="tok-num">'+esc(m[5])+'</span>'; }
+    }
+    out += esc(code.slice(last));
+    return out;
+  }
+  doc.querySelectorAll('pre code').forEach(function(c){ c.innerHTML = highlight(c.textContent); });
+
+  /* ---------- collapse / expand ---------- */
+  doc.querySelectorAll('.sec-head').forEach(function(h){
+    h.addEventListener('click', function(){ h.parentElement.classList.toggle('collapsed'); });
+  });
+  doc.getElementById('expandAll').addEventListener('click', function(){
+    sections.forEach(function(s){ s.classList.remove('collapsed'); });
+  });
+  doc.getElementById('collapseAll').addEventListener('click', function(){
+    sections.forEach(function(s){ s.classList.add('collapsed'); });
+  });
+
+  /* ---------- theme ---------- */
+  var html = doc.documentElement;
+  try{ var saved = localStorage.getItem('so-theme'); if(saved) html.setAttribute('data-theme', saved); }catch(e){}
+  doc.getElementById('theme').addEventListener('click', function(){
+    var t = html.getAttribute('data-theme')==='dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', t);
+    try{ localStorage.setItem('so-theme', t); }catch(e){}
+  });
+
+  /* ---------- search ---------- */
+  var search = doc.getElementById('search');
+  var noresult = doc.getElementById('noresult');
+  var ITEMS = 'tbody tr, li, p, .snippet, .note, .tip, .warn';
+  function resetSearch(){
+    main.querySelectorAll('[hidden]').forEach(function(e){ e.removeAttribute('hidden'); });
+    sections.forEach(function(s){ s.classList.remove('force-open'); });
+    noresult.style.display='none';
+  }
+  search.addEventListener('input', function(){
+    var q = search.value.trim().toLowerCase();
+    resetSearch();
+    if(!q) return;
+    var anySection = false;
+    sections.forEach(function(sec){
+      var titleMatch = sec.querySelector('.sec-title').textContent.toLowerCase().indexOf(q) !== -1;
+      var secHas = false;
+      sec.querySelectorAll('.block').forEach(function(block){
+        var h3 = block.querySelector('h3');
+        var headMatch = h3 ? h3.textContent.toLowerCase().indexOf(q) !== -1 : false;
+        var blockHas = false;
+        block.querySelectorAll(ITEMS).forEach(function(it){
+          var m = titleMatch || headMatch || it.textContent.toLowerCase().indexOf(q) !== -1;
+          if(m){ blockHas = true; } else { it.setAttribute('hidden',''); }
+        });
+        block.querySelectorAll('table').forEach(function(t){
+          var rows = Array.prototype.slice.call(t.querySelectorAll('tbody tr'));
+          var anyRow = rows.some(function(r){ return !r.hasAttribute('hidden'); });
+          if(!anyRow) t.setAttribute('hidden','');
+        });
+        if(blockHas || headMatch || titleMatch){ secHas = true; }
+        else { block.setAttribute('hidden',''); }
+      });
+      if(titleMatch){
+        sec.querySelectorAll('[hidden]').forEach(function(e){ e.removeAttribute('hidden'); });
+        secHas = true;
+      }
+      if(secHas){ sec.classList.add('force-open'); anySection = true; }
+      else { sec.setAttribute('hidden',''); }
+    });
+    noresult.style.display = anySection ? 'none' : 'block';
+  });
+
+  /* ---------- scrollspy ---------- */
+  var byId = {};
+  navLinks.forEach(function(a){ byId[a.getAttribute('href').slice(1)] = a; });
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          navLinks.forEach(function(a){ a.classList.remove('active'); });
+          var a = byId[en.target.id]; if(a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-10% 0px -80% 0px' });
+    sections.forEach(function(s){ obs.observe(s); });
+  }
+
+  /* ---------- mobile menu ---------- */
+  var hamb = doc.getElementById('hamb');
+  hamb.addEventListener('click', function(){ doc.body.classList.toggle('menu-open'); });
+  navLinks.forEach(function(a){ a.addEventListener('click', function(){ doc.body.classList.remove('menu-open'); }); });
+})();
+</script>
+</body>
+</html>
