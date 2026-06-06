@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sintesi rapida di Comunicazioni Numeriche: concetti essenziali e formule per la risoluzione degli esercizi (probabilità, variabili aleatorie, sistemi di v.a., processi aleatori).">
+<title>Comunicazioni Numeriche — Sintesi rapida</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<style>/* === Tema === */
+/* ===== Tema e variabili ===== */
+:root{
+  --bg:#f7f5ef; --surface:#ffffff; --text:#1f2430; --muted:#5b6472;
+  --border:#e3ddd0; --shadow:rgba(40,40,60,.08);
+  --accent:#2563c9; --accent-weak:#e8f0fc;
+  --sidebar-bg:#1d2330; --sidebar-text:#cfd6e4; --sidebar-active:#7fb0ff;
+  --def-b:#2563c9;  --def-bg:#eef4fe;
+  --thm-b:#7c3aed;  --thm-bg:#f3eefe;
+  --ex-b:#15803d;   --ex-bg:#ecfaf0;
+  --intu-b:#0e9aa7; --intu-bg:#e7f7f8;
+  --warn-b:#d97706; --warn-bg:#fff5e6;
+  --formula-b:#b8860b; --formula-bg:#fffaf0;
+  --code-bg:#f0ede4;
+  --table-head:#efe9dc;
+}
+[data-theme="dark"]{
+  --bg:#11151c; --surface:#1a212c; --text:#e7ebf2; --muted:#9aa6b8;
+  --border:#2b3442; --shadow:rgba(0,0,0,.4);
+  --accent:#6ea8ff; --accent-weak:#1c2a44;
+  --sidebar-bg:#0c0f15; --sidebar-text:#c2cad9; --sidebar-active:#7fb0ff;
+  --def-bg:#16243a; --thm-bg:#231a3a; --ex-bg:#102a1b; --intu-bg:#0e2a2d;
+  --warn-bg:#33260f; --formula-bg:#2a2410; --code-bg:#222a36; --table-head:#212a38;
+}
+
+/* ===== Base ===== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:1rem}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:17px; line-height:1.65; -webkit-text-size-adjust:100%;
+}
+.layout{display:flex; align-items:flex-start}
+
+/* ===== Sidebar ===== */
+#sidebar{
+  position:sticky; top:0; height:100vh; width:300px; flex:0 0 300px;
+  background:var(--sidebar-bg); color:var(--sidebar-text);
+  overflow-y:auto; padding:1.1rem 0 3rem; font-size:14.5px;
+}
+#sidebar .brand{padding:0 1.2rem 1rem; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:.6rem}
+#sidebar .brand h1{font-size:1.05rem; margin:.1rem 0; color:#fff; line-height:1.3}
+#sidebar .brand span{font-size:.8rem; color:#8c97ab}
+#sidebar nav a{
+  display:block; color:var(--sidebar-text); text-decoration:none;
+  padding:.34rem 1.2rem; border-left:3px solid transparent; line-height:1.35;
+}
+#sidebar nav a:hover{background:rgba(255,255,255,.06); color:#fff}
+#sidebar nav a.lvl2{padding-left:2.1rem; font-size:13.5px; color:#9aa6bd}
+#sidebar nav a.active{color:var(--sidebar-active); border-left-color:var(--sidebar-active); background:rgba(127,176,255,.10); font-weight:600}
+#sidebar nav .grp{padding:.9rem 1.2rem .25rem; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:#6b7689}
+
+/* ===== Main ===== */
+main{flex:1 1 auto; min-width:0; padding:2.2rem clamp(1rem,4vw,3.5rem); max-width:980px; margin:0 auto}
+section{margin-bottom:2.4rem; scroll-margin-top:1rem}
+h2{font-size:1.85rem; line-height:1.2; margin:2.4rem 0 .3rem; padding-top:.6rem; border-bottom:3px solid var(--accent); padding-bottom:.4rem}
+h2 .num{color:var(--accent); font-weight:800; margin-right:.4rem}
+h3{font-size:1.32rem; margin:2rem 0 .5rem; color:var(--text)}
+h4{font-size:1.08rem; margin:1.4rem 0 .3rem; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; font-weight:700}
+p{margin:.6rem 0}
+ul,ol{margin:.5rem 0 .8rem; padding-left:1.4rem}
+li{margin:.28rem 0}
+a{color:var(--accent)}
+hr{border:none; border-top:1px solid var(--border); margin:2rem 0}
+strong{color:var(--text)}
+code{background:var(--code-bg); padding:.08em .4em; border-radius:5px; font-size:.92em; font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+.lead{font-size:1.06rem; color:var(--muted)}
+
+/* ===== Riquadri ===== */
+.box{border-left:5px solid var(--border); background:var(--surface); border-radius:8px;
+  padding:.85rem 1.1rem; margin:1.1rem 0; box-shadow:0 1px 3px var(--shadow)}
+.box .tag{display:inline-block; font-size:.72rem; font-weight:800; letter-spacing:.06em;
+  text-transform:uppercase; margin-bottom:.35rem}
+.box p:first-of-type{margin-top:.1rem}
+.box p:last-child{margin-bottom:.1rem}
+.box.def{border-color:var(--def-b); background:var(--def-bg)}    .box.def .tag{color:var(--def-b)}
+.box.thm{border-color:var(--thm-b); background:var(--thm-bg)}    .box.thm .tag{color:var(--thm-b)}
+.box.ex{border-color:var(--ex-b); background:var(--ex-bg)}       .box.ex .tag{color:var(--ex-b)}
+.box.intu{border-color:var(--intu-b); background:var(--intu-bg)} .box.intu .tag{color:var(--intu-b)}
+.box.warn{border-color:var(--warn-b); background:var(--warn-bg)} .box.warn .tag{color:var(--warn-b)}
+
+/* Formula chiave */
+.formula{background:var(--formula-bg); border:1px solid var(--formula-b);
+  border-radius:8px; padding:.6rem .9rem; margin:1rem 0; text-align:center; overflow-x:auto}
+.formula.named{display:flex; align-items:center; gap:.8rem; justify-content:center; flex-wrap:wrap}
+.formula .lbl{font-size:.8rem; color:var(--formula-b); font-weight:700; text-transform:uppercase; letter-spacing:.04em}
+
+/* Esempi: step di svolgimento */
+.steps{counter-reset:step; list-style:none; padding-left:0}
+.steps>li{counter-increment:step; position:relative; padding-left:2.2rem; margin:.7rem 0}
+.steps>li::before{content:counter(step); position:absolute; left:0; top:.05rem;
+  width:1.55rem; height:1.55rem; background:var(--ex-b); color:#fff; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:700}
+.result{background:var(--ex-b); color:#fff; padding:.5rem .8rem; border-radius:6px; display:inline-block; margin-top:.4rem; font-weight:600}
+[data-theme="dark"] .result{color:#eafff0}
+
+/* Tabelle */
+.tablewrap{overflow-x:auto; margin:1.1rem 0}
+table{border-collapse:collapse; width:100%; font-size:.95rem; background:var(--surface);
+  border-radius:8px; overflow:hidden; box-shadow:0 1px 3px var(--shadow)}
+th,td{border:1px solid var(--border); padding:.55rem .7rem; text-align:left; vertical-align:top}
+th{background:var(--table-head); font-weight:700}
+tbody tr:nth-child(even){background:rgba(0,0,0,.02)}
+[data-theme="dark"] tbody tr:nth-child(even){background:rgba(255,255,255,.03)}
+
+/* Legenda */
+.legend{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.6rem; margin:1rem 0}
+.legend .item{display:flex; gap:.5rem; align-items:flex-start; font-size:.92rem; padding:.5rem .7rem; border-radius:6px; background:var(--surface); border:1px solid var(--border)}
+.legend .sw{width:14px; height:14px; border-radius:3px; flex:0 0 14px; margin-top:.28rem}
+
+/* Top button / toolbar */
+.toolbar{position:fixed; top:.7rem; right:.9rem; display:flex; gap:.4rem; z-index:50}
+.toolbar button,#menu-toggle{background:var(--surface); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:.4rem .6rem; cursor:pointer; box-shadow:0 1px 4px var(--shadow); font-size:1rem}
+#to-top{position:fixed; bottom:1.2rem; right:1.2rem; z-index:50; display:none;
+  background:var(--accent); color:#fff; border:none; border-radius:50%; width:46px; height:46px;
+  font-size:1.3rem; cursor:pointer; box-shadow:0 2px 8px var(--shadow)}
+#menu-toggle{display:none; position:fixed; top:.7rem; left:.7rem; z-index:60}
+
+/* KaTeX: scroll su formule larghe in mobile */
+.katex-display{overflow-x:auto; overflow-y:hidden; padding:.2rem 0}
+.katex{font-size:1.05em}
+
+/* ===== Responsive ===== */
+@media (max-width:860px){
+  body{font-size:16px}
+  #menu-toggle{display:block}
+  #sidebar{position:fixed; left:0; top:0; z-index:55; transform:translateX(-100%);
+    transition:transform .25s ease; box-shadow:2px 0 16px rgba(0,0,0,.3); width:84vw; max-width:330px}
+  #sidebar.open{transform:translateX(0)}
+  main{padding-top:3.4rem}
+  #backdrop{display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:54}
+  #backdrop.show{display:block}
+}
+@media (min-width:861px){ #backdrop{display:none} }
+
+/* ===== Stampa ===== */
+@media print{
+  #sidebar,.toolbar,#to-top,#menu-toggle,#backdrop{display:none !important}
+  body{background:#fff; color:#000; font-size:11.5pt}
+  main{max-width:100%; margin:0; padding:0}
+  .box,table,.formula{box-shadow:none; break-inside:avoid}
+  h2,h3{break-after:avoid}
+  section{break-inside:auto}
+  a{color:#000; text-decoration:none}
+}
+
+</style>
+</head>
+<body>
+<div class="toolbar"><button id="theme-btn" title="Tema chiaro/scuro" aria-label="Tema chiaro/scuro">🌙</button></div>
+<button id="menu-toggle" aria-label="Apri indice">☰</button>
+<div id="backdrop"></div>
+<div class="layout">
+<aside id="sidebar">
+  <div class="brand">
+    <h1>Comunicazioni Numeriche</h1>
+    <span>Sintesi rapida · concetti e formule per gli esercizi</span>
+  </div>
+  <nav>
+    <a href="#sec0">0 · Introduzione</a>
+
+    <div class="grp">1 · Teoria della probabilità</div>
+    <a class="lvl2" href="#s1-insiemi">1.1 Insiemi ed eventi</a>
+    <a class="lvl2" href="#s1-spazio">1.2 Spazio di probabilità</a>
+    <a class="lvl2" href="#s1-defprob">1.3 Le tre definizioni</a>
+    <a class="lvl2" href="#s1-assiomi">1.4 Assiomi e teoremi</a>
+    <a class="lvl2" href="#s1-uniforme">1.5 Modello uniforme</a>
+    <a class="lvl2" href="#s1-combinatoria">1.6 Calcolo combinatorio</a>
+    <a class="lvl2" href="#s1-condizionata">1.7 Probabilità condizionata</a>
+    <a class="lvl2" href="#s1-bayes">1.8 Probabilità totale e Bayes</a>
+    <a class="lvl2" href="#s1-indip">1.9 Eventi indipendenti</a>
+    <a class="lvl2" href="#s1-composti">1.10 Esperimenti composti e Bernoulli</a>
+    <a class="lvl2" href="#s1-applicazioni">1.11 Canale binario e codice a ripetizione</a>
+
+    <div class="grp">2 · Variabili aleatorie — I</div>
+    <a class="lvl2" href="#s2-cdf">2.1 Definizione e CDF</a>
+    <a class="lvl2" href="#s2-discrete">2.2 V.a. discrete e PMF</a>
+    <a class="lvl2" href="#s2-discnot">2.3 Bernoulli, Binomiale, Poisson</a>
+    <a class="lvl2" href="#s2-continue">2.4 V.a. continue e PDF</a>
+    <a class="lvl2" href="#s2-contnot">2.5 Uniforme, Esponenziale, Gaussiana</a>
+    <a class="lvl2" href="#s2-gauss">2.6 Gaussiana standard, Φ e Q</a>
+    <a class="lvl2" href="#s2-miste">2.7 V.a. miste e delta</a>
+
+    <div class="grp">3 · Variabili aleatorie — II</div>
+    <a class="lvl2" href="#s3-trasf">3.1 Trasformazioni Y = g(X)</a>
+    <a class="lvl2" href="#s3-teofond">3.2 Teorema fondamentale</a>
+    <a class="lvl2" href="#s3-indici">3.3 Media, varianza, potenza</a>
+    <a class="lvl2" href="#s3-aspett">3.4 Teorema dell'aspettazione</a>
+    <a class="lvl2" href="#s3-indicinot">3.5 Indici delle distribuzioni</a>
+    <a class="lvl2" href="#s3-cheby">3.6 Teorema di Chebyshev</a>
+    <a class="lvl2" href="#s3-cond">3.7 Condizionate e assenza di memoria</a>
+
+    <div class="grp">4 · Sistemi di variabili aleatorie</div>
+    <a class="lvl2" href="#s4-congiunta">4.1 Congiunta e marginali</a>
+    <a class="lvl2" href="#s4-indip">4.2 Indipendenza</a>
+    <a class="lvl2" href="#s4-cov">4.3 Correlazione e covarianza</a>
+    <a class="lvl2" href="#s4-gauss">4.4 Gaussiane congiunte</a>
+    <a class="lvl2" href="#s4-tlc">4.5 Teorema limite centrale</a>
+
+    <div class="grp">5 · Processi aleatori</div>
+    <a class="lvl2" href="#s5-def">5.1 Definizione</a>
+    <a class="lvl2" href="#s5-descr">5.2 Descrizione statistica</a>
+    <a class="lvl2" href="#s5-ordini">5.3 Primo e secondo ordine</a>
+    <a class="lvl2" href="#s5-staz">5.4 Stazionarietà</a>
+    <a class="lvl2" href="#s5-acf">5.5 Autocorrelazione (ACF)</a>
+    <a class="lvl2" href="#s5-filtro">5.6 Filtraggio LTI</a>
+    <a class="lvl2" href="#s5-dsp">5.7 Densità spettrale di potenza</a>
+    <a class="lvl2" href="#s5-bianco">5.8 Rumore bianco</a>
+    <a class="lvl2" href="#s5-gauss">5.9 Processi gaussiani e applicazione</a>
+
+    <div class="grp">Appendici</div>
+    <a class="lvl2" href="#app-distrib">A · Tabella delle distribuzioni</a>
+    <a class="lvl2" href="#app-formulario">B · Formulario compatto</a>
+    <a class="lvl2" href="#app-metodo">C · Come imposto l'esercizio</a>
+    <a class="lvl2" href="#app-glossario">D · Glossario dei simboli</a>
+  </nav>
+</aside>
+<main>
+
+<header>
+  <h1 style="font-size:2rem;border-bottom:none;margin-bottom:.2rem">Comunicazioni Numeriche — Sintesi</h1>
+  <p class="lead">Versione rapida: <strong>concetti essenziali e formule</strong> per risolvere gli esercizi, senza svolgimenti. Per gli esercizi risolti passo-passo c'è la versione completa.</p>
+</header>
+
+<section id="sec0">
+  <h2><span class="num">0</span> Introduzione</h2>
+  <p>Quattro blocchi in ordine di complessità: <strong>teoria della probabilità</strong> → <strong>variabili aleatorie</strong> → <strong>sistemi di variabili aleatorie</strong> → <strong>processi aleatori</strong> (il modello del rumore). Sotto, ogni concetto è ridotto all'essenziale con le relative formule.</p>
+  <div class="legend">
+    <div class="item"><span class="sw" style="background:#2563c9"></span><div><strong>Definizione</strong></div></div>
+    <div class="item"><span class="sw" style="background:#7c3aed"></span><div><strong>Teorema / Proprietà</strong></div></div>
+    <div class="item"><span class="sw" style="background:#b8860b"></span><div><strong>Formula chiave</strong></div></div>
+    <div class="item"><span class="sw" style="background:#d97706"></span><div><strong>Attenzione</strong> — trabocchetti d'esame</div></div>
+  </div>
+  <p style="color:var(--muted);font-size:.92rem">Indice a sinistra (☰ su telefono) · tema scuro 🌙 in alto a destra · pagina stampabile in PDF.</p>
+</section>
+
+<section id="sec1">
+  <h2><span class="num">1</span> Teoria della probabilità</h2>
+
+  <h3 id="s1-insiemi">1.1 Insiemi ed eventi</h3>
+  <p>Operazioni base: <strong>unione</strong> $A\cup B$ ("$A$ o $B$"), <strong>intersezione</strong> $A\cap B$ ("$A$ e $B$"), <strong>complementare</strong> $A^c$ ("non $A$"). Due insiemi sono <strong>disgiunti</strong> se $A\cap B=\varnothing$; una <strong>partizione</strong> di $\Omega$ è fatta di insiemi disgiunti a due a due la cui unione è $\Omega$.</p>
+  <div class="formula">$$(A^c)^c=A\qquad A\cup A^c=\Omega\qquad A\cap A^c=\varnothing$$</div>
+  <p>Se $\Omega$ ha $N$ elementi, ha $2^N$ sottoinsiemi.</p>
+
+  <h3 id="s1-spazio">1.2 Spazio di probabilità</h3>
+  <p>Un esperimento casuale è la terna $(\Omega,S,P)$: <strong>spazio campione</strong> $\Omega$ (tutti gli esiti), <strong>eventi</strong> $S$ (sottoinsiemi di $\Omega$), <strong>probabilità</strong> $P$. Evento certo $=\Omega$, impossibile $=\varnothing$. Le operazioni tra eventi sono operazioni tra insiemi.</p>
+
+  <h3 id="s1-defprob">1.3 Le tre definizioni di probabilità</h3>
+  <ul>
+    <li><strong>Classica:</strong> $P(A)=m_A/M$ (casi favorevoli su possibili, se equiprobabili).</li>
+    <li><strong>Frequentista:</strong> $P(A)=\lim_{N\to\infty} n_A/N$ (frequenza relativa).</li>
+    <li><strong>Assiomatica (Kolmogorov):</strong> qualunque $P$ che rispetti i tre assiomi (§1.4). È quella moderna; le altre due ne sono casi particolari.</li>
+  </ul>
+
+  <h3 id="s1-assiomi">1.4 Assiomi e teoremi</h3>
+  <div class="box thm">
+    <span class="tag">📐 Assiomi di Kolmogorov</span>
+    <p>1) $P(\Omega)=1$ · 2) $P(A)\ge0$ · 3) se $A\cap B=\varnothing$: $P(A\cup B)=P(A)+P(B)$.</p>
+  </div>
+  <div class="formula">$$P(A^c)=1-P(A)\qquad P(\varnothing)=0\qquad B\subset A\Rightarrow P(B)\le P(A)$$</div>
+  <div class="formula named"><span class="lbl">unione (caso generale)</span> $$P(A\cup B)=P(A)+P(B)-P(A\cap B)$$</div>
+  <div class="box warn"><span class="tag">⚠️</span><p>$P(A\cup B)=P(A)+P(B)$ vale <strong>solo</strong> se disgiunti. "Almeno uno" → conviene il complementare $1-P(\text{nessuno})$.</p></div>
+
+  <h3 id="s1-uniforme">1.5 Modello uniforme</h3>
+  <p>Se gli $M$ esiti sono equiprobabili, per un evento con $K$ casi favorevoli:</p>
+  <div class="formula">$$P(A)=\frac{K}{M}=\frac{\text{casi favorevoli}}{\text{casi possibili}}$$</div>
+  <p>Calcolare $P$ si riduce a <em>contare</em> → calcolo combinatorio. Vale solo per spazi finiti.</p>
+
+  <h3 id="s1-combinatoria">1.6 Calcolo combinatorio</h3>
+  <p>Principio fondamentale: passi con $k_1,k_2,\dots$ scelte → $\prod_i k_i$ modi (se uguali, $K^N$).</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Tipo</th><th>L'ordine conta?</th><th>Formula</th></tr></thead>
+    <tbody>
+      <tr><td>Disposizioni $D_{N,k}$</td><td>sì, senza ripetizione</td><td>$\dfrac{N!}{(N-k)!}$</td></tr>
+      <tr><td>Permutazioni $P_N$</td><td>sì, $k=N$</td><td>$N!$</td></tr>
+      <tr><td>Combinazioni $C_{N,k}$</td><td>no</td><td>$\dbinom{N}{k}=\dfrac{N!}{k!(N-k)!}$</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="s1-condizionata">1.7 Probabilità condizionata</h3>
+  <div class="formula">$$P(A\mid B)=\frac{P(A\cap B)}{P(B)}\qquad\Longrightarrow\qquad P(A\cap B)=P(A\mid B)\,P(B)$$</div>
+  <p>("regola del prodotto", utile per estrazioni in sequenza / senza reimbussolamento).</p>
+
+  <h3 id="s1-bayes">1.8 Probabilità totale e Bayes</h3>
+  <p>Con $A_1,\dots,A_K$ partizione di $\Omega$ (le "cause"):</p>
+  <div class="formula">$$P(B)=\sum_{i=1}^{K}P(B\mid A_i)\,P(A_i)\qquad\quad P(A_i\mid B)=\frac{P(B\mid A_i)\,P(A_i)}{\sum_k P(B\mid A_k)\,P(A_k)}$$</div>
+  <p>Probabilità totale: dalle cause all'effetto. Bayes: dall'effetto osservato alle cause.</p>
+
+  <h3 id="s1-indip">1.9 Eventi indipendenti</h3>
+  <div class="formula">$$A,B \text{ indipendenti}\iff P(A\cap B)=P(A)\,P(B)\iff P(A\mid B)=P(A)$$</div>
+  <div class="box warn"><span class="tag">⚠️</span><p><strong>Disgiunti ≠ indipendenti.</strong> Disgiunti: $P(A\cap B)=0$; indipendenti: $P(A\cap B)=P(A)P(B)$.</p></div>
+
+  <h3 id="s1-composti">1.10 Esperimenti composti e prove ripetute</h3>
+  <p>Esperimenti <strong>indipendenti</strong>: $P(A_1\times A_2)=P_1(A_1)P_2(A_2)$ (es. estrazione <em>con</em> reimbussolamento). <strong>Dipendenti</strong>: si usa la regola del prodotto con la condizionata (estrazione <em>senza</em> reimbussolamento).</p>
+  <div class="box thm"><span class="tag">📐 Formula di Bernoulli</span>
+    <p>$A$ con prob. $p$ ripetuto $N$ volte (indipendenti): prob. di <strong>esattamente $k$</strong> successi</p>
+    <div class="formula">$$P(k)=\binom{N}{k}p^{k}(1-p)^{N-k}$$</div>
+  </div>
+
+  <h3 id="s1-applicazioni">1.11 Canale binario simmetrico e codice a ripetizione</h3>
+  <p><strong>BSC:</strong> probabilità di transizione $P(R_1\mid T_0)=P(R_0\mid T_1)=P_e$, $\;P(R_0\mid T_0)=P(R_1\mid T_1)=1-P_e$. Dal simbolo ricevuto si risale al trasmesso con Bayes.</p>
+  <p><strong>Codice a ripetizione</strong> ($n$ dispari, decisione a maggioranza, corregge fino a $\frac{n-1}{2}$ errori): errore residuo</p>
+  <div class="formula">$$P_r(n)=\sum_{k=\frac{n+1}{2}}^{n}\binom{n}{k}p^{k}(1-p)^{n-k}\qquad\Big(P_r(3)=3p^2(1-p)+p^3\Big)$$</div>
+</section>
+
+<section id="sec2">
+  <h2><span class="num">2</span> Variabili aleatorie — descrizione</h2>
+
+  <h3 id="s2-cdf">2.1 Definizione e funzione di distribuzione (CDF)</h3>
+  <p>Una v.a. $X$ associa un numero reale a ogni esito. È descritta completamente dalla <strong>CDF</strong> $F_X(x)=P(X\le x)$.</p>
+  <div class="box thm"><span class="tag">📐 Proprietà CDF</span>
+    <p>$0\le F_X\le1$; $F_X(-\infty)=0$, $F_X(+\infty)=1$; non decrescente; continua da destra.</p></div>
+  <div class="formula">$$P(x_1\lt X\le x_2)=F_X(x_2)-F_X(x_1)\qquad P(X=\bar x)=F_X(\bar x^+)-F_X(\bar x^-)\ \text{(salto)}$$</div>
+
+  <h3 id="s2-discrete">2.2 V.a. discrete e massa di probabilità (PMF)</h3>
+  <p>Valori discreti $x_1,x_2,\dots$; <strong>PMF</strong> $p_X(x)=P(X=x)$, con $\sum_i p_X(x_i)=1$. La CDF è a gradini: $F_X(x)=\sum_i p_X(x_i)\,u(x-x_i)$.</p>
+
+  <h3 id="s2-discnot">2.3 Distribuzioni discrete notevoli</h3>
+  <div class="formula">$$\text{Bernoulli}(p):\ P(1)=p,\ P(0)=1-p\qquad\quad B(p,N):\ p_X(k)=\binom{N}{k}p^k(1-p)^{N-k}$$</div>
+  <div class="formula">$$\text{Poisson}(\Lambda):\ p_X(k)=\frac{\Lambda^k}{k!}e^{-\Lambda},\quad k=0,1,2,\dots$$</div>
+
+  <h3 id="s2-continue">2.4 V.a. continue e densità (PDF)</h3>
+  <p>$P(X=x)=0$ per ogni $x$; CDF continua. <strong>Densità</strong> $f_X(x)=\dfrac{dF_X}{dx}\ge0$.</p>
+  <div class="formula">$$F_X(x)=\int_{-\infty}^{x}f_X(\xi)\,d\xi\qquad P(X\in I)=\int_I f_X\qquad \int_{-\infty}^{+\infty}f_X=1$$</div>
+  <p>Per le continue $\lt$ e $\le$ negli intervalli sono equivalenti. Intuizione: $f_X(x)\,dx\approx P(x\lt X\le x+dx)$.</p>
+
+  <h3 id="s2-contnot">2.5 Distribuzioni continue notevoli</h3>
+  <div class="formula">$$U(a,b):\ f_X=\frac{1}{b-a}\ \text{su }[a,b]\qquad\quad \text{Exp}(\lambda):\ f_X=\frac{1}{\lambda}e^{-x/\lambda}u(x),\ \ F_X=(1-e^{-x/\lambda})u(x)$$</div>
+  <div class="formula named"><span class="lbl">Gaussiana</span> $$\mathcal{N}(\eta,\sigma^2):\ f_X(x)=\frac{1}{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\eta)^2}{2\sigma^2}\right)$$</div>
+  <div class="box warn"><span class="tag">⚠️</span><p>Convenzione esponenziale: qui $\lambda$ è il <strong>valor medio</strong> (in $x=0$ vale $1/\lambda$). Alcuni testi usano il tasso $1/\lambda$.</p></div>
+
+  <h3 id="s2-gauss">2.6 Gaussiana standard, funzioni Φ e Q</h3>
+  <p>$Z\in\mathcal{N}(0,1)$: $f_Z(z)=\frac{1}{\sqrt{2\pi}}e^{-z^2/2}$. $\Phi(z)=F_Z(z)$; $Q(z)=1-\Phi(z)$ è la coda destra.</p>
+  <div class="box thm"><span class="tag">📐 Standardizzazione (la tecnica chiave)</span>
+    <p>Se $X\in\mathcal{N}(\eta,\sigma^2)$, allora $Z=\dfrac{X-\eta}{\sigma}\in\mathcal{N}(0,1)$.</p>
+    <div class="formula">$$P(X\gt\gamma)=Q\!\left(\frac{\gamma-\eta}{\sigma}\right)\qquad P(a\lt X\le b)=Q\!\left(\frac{a-\eta}{\sigma}\right)-Q\!\left(\frac{b-\eta}{\sigma}\right)$$</div>
+  </div>
+  <div class="formula">$$Q(-z)=1-Q(z)\qquad Q(0)=\tfrac12\qquad P(|X-\eta|\gt n\sigma)=2Q(n)$$</div>
+
+  <h3 id="s2-miste">2.7 V.a. miste e delta di Dirac</h3>
+  <p>Una v.a. discreta ha densità a impulsi: $f_X(x)=\sum_i p_X(x_i)\,\delta(x-x_i)$. Una v.a. <strong>mista</strong> ha CDF con salti ma non costante a tratti: parte continua + impulsi nei punti di salto.</p>
+  <div class="box warn"><span class="tag">⚠️</span><p>Integrando una PDF con impulsi: un estremo che cade su un $x_i$ include/esclude l'impulso $P(X=x_i)$ a seconda di $\le$ o $\lt$.</p></div>
+</section>
+
+<section id="sec3">
+  <h2><span class="num">3</span> Variabili aleatorie — trasformazioni e indici</h2>
+
+  <h3 id="s3-trasf">3.1 Trasformazioni $Y=g(X)$</h3>
+  <p>Metodo generale (sempre valido): si parte dalla CDF raccogliendo gli $x$ che portano $Y$ sotto soglia, poi si deriva.</p>
+  <div class="formula">$$F_Y(y)=P\big(g(X)\le y\big)=\!\!\int_{\{x:\,g(x)\le y\}}\!\! f_X(x)\,dx\qquad f_Y(y)=\frac{dF_Y}{dy}$$</div>
+  <p>Se $Y$ è discreta: $p_Y(y_k)=\sum_{x_i:\,g(x_i)=y_k}p_X(x_i)$.</p>
+
+  <h3 id="s3-teofond">3.2 Teorema fondamentale (v.a. continue)</h3>
+  <p>Se $y=g(x)$ ha soluzioni reali $x_1,\dots,x_K$:</p>
+  <div class="formula">$$f_Y(y)=\sum_{i=1}^{K}\frac{f_X(x_i)}{|g'(x_i)|}\bigg|_{x_i=g^{-1}(y)}$$</div>
+  <p>Se per un dato $y$ non ci sono soluzioni, $f_Y(y)=0$. (Generazione da <code>rand()</code>: $X=F_X^{-1}(Y)$; per l'esponenziale $x=-\lambda\ln(1-y)$.)</p>
+
+  <h3 id="s3-indici">3.3 Media, varianza, potenza</h3>
+  <div class="formula">$$\eta_X=E[X]=\int x\,f_X\,dx\quad(\text{o }\textstyle\sum_i x_i p_X)\qquad P_X=E[X^2]\qquad \sigma_X^2=E[X^2]-\eta_X^2$$</div>
+  <p>$\sigma_X^2=E[(X-\eta_X)^2]$ è l'indice di dispersione; $\sigma_X=\sqrt{\sigma_X^2}$. Densità pari ⇒ media nulla.</p>
+
+  <h3 id="s3-aspett">3.4 Teorema dell'aspettazione</h3>
+  <p>Il valor medio di $g(X)$ si calcola senza ricavare $f_Y$:</p>
+  <div class="formula">$$E[g(X)]=\int g(x)\,f_X(x)\,dx\quad(\text{o }\textstyle\sum_i g(x_i)p_X(x_i))\qquad E\Big[\textstyle\sum_i a_i g_i(X)\Big]=\sum_i a_i E[g_i(X)]$$</div>
+
+  <h3 id="s3-indicinot">3.5 Indici delle distribuzioni notevoli</h3>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Distribuzione</th><th>Media</th><th>Varianza</th></tr></thead>
+    <tbody>
+      <tr><td>Bernoulli$(p)$</td><td>$p$</td><td>$p(1-p)$</td></tr>
+      <tr><td>Binomiale $B(p,N)$</td><td>$Np$</td><td>$Np(1-p)$</td></tr>
+      <tr><td>Poisson$(\Lambda)$</td><td>$\Lambda$</td><td>$\Lambda$</td></tr>
+      <tr><td>Uniforme $U(a,b)$</td><td>$\frac{a+b}{2}$</td><td>$\frac{(b-a)^2}{12}$</td></tr>
+      <tr><td>Esponenziale $\text{Exp}(\lambda)$</td><td>$\lambda$</td><td>$\lambda^2$</td></tr>
+      <tr><td>Gaussiana $\mathcal{N}(\eta,\sigma^2)$</td><td>$\eta$</td><td>$\sigma^2$</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="s3-cheby">3.6 Teorema di Chebyshev</h3>
+  <p>Limite valido per qualunque distribuzione (con $k\gt1$):</p>
+  <div class="formula">$$P\big(|X-\eta_X|\ge k\sigma_X\big)\le\frac{1}{k^2}\qquad\Longleftrightarrow\qquad P\big(|X-\eta_X|\lt k\sigma_X\big)\ge 1-\frac{1}{k^2}$$</div>
+  <p>È un limite molto conservativo (per la gaussiana il valore vero è assai più piccolo).</p>
+
+  <h3 id="s3-cond">3.7 V.a. condizionate e assenza di memoria</h3>
+  <div class="formula">$$F_{X\mid C}(x\mid C)=\frac{P(\{X\le x\}\cap C)}{P(C)}\qquad f_{X\mid C}=\frac{dF_{X\mid C}}{dx}$$</div>
+  <div class="box thm"><span class="tag">📐 Assenza di memoria (solo esponenziale)</span>
+    <div class="formula">$$P(X\gt t_0+\Delta t\mid X\gt t_0)=P(X\gt\Delta t)=e^{-\Delta t/\lambda}$$</div>
+    <p>Un dispositivo "usato ma funzionante" è come nuovo.</p>
+  </div>
+</section>
+
+<section id="sec4">
+  <h2><span class="num">4</span> Sistemi di variabili aleatorie</h2>
+
+  <h3 id="s4-congiunta">4.1 Distribuzione congiunta e marginali</h3>
+  <div class="formula">$$F_{XY}(x,y)=P(X\le x,Y\le y)\qquad f_{XY}(x,y)=\frac{\partial^2 F_{XY}}{\partial x\,\partial y}$$</div>
+  <div class="formula">$$f_X(x)=\int_{-\infty}^{+\infty}\!f_{XY}\,dy\qquad f_Y(y)=\int_{-\infty}^{+\infty}\!f_{XY}\,dx\qquad P((X,Y)\in D)=\iint_D f_{XY}$$</div>
+
+  <h3 id="s4-indip">4.2 Indipendenza statistica</h3>
+  <div class="formula">$$X,Y \text{ indipendenti}\iff F_{XY}=F_X F_Y\iff f_{XY}=f_X\,f_Y$$</div>
+
+  <h3 id="s4-cov">4.3 Correlazione e covarianza</h3>
+  <div class="formula">$$r_{XY}=E[XY]\qquad c_{XY}=r_{XY}-\eta_X\eta_Y\qquad \rho_{XY}=\frac{c_{XY}}{\sigma_X\sigma_Y},\ \ |\rho_{XY}|\le1$$</div>
+  <div class="formula">$$\operatorname{Var}(X+Y)=\operatorname{Var}(X)+\operatorname{Var}(Y)+2c_{XY}$$</div>
+  <ul>
+    <li><strong>Incorrelate:</strong> $c_{XY}=0$ &nbsp;·&nbsp; <strong>Ortogonali:</strong> $r_{XY}=0$.</li>
+    <li>$|\rho_{XY}|=1\iff Y=aX+b$ (dipendenza lineare perfetta).</li>
+  </ul>
+  <div class="box warn"><span class="tag">⚠️</span><p>Indipendenti $\Rightarrow$ incorrelate, ma <strong>incorrelate ⇏ indipendenti</strong> (la covarianza vede solo i legami lineari). Tipico controesempio: $X=\sin\Theta,\ Y=\cos\Theta$ con $\Theta\in U[0,2\pi)$.</p></div>
+
+  <h3 id="s4-gauss">4.4 Variabili congiuntamente gaussiane</h3>
+  <div class="formula">$$f_{XY}(x,y)=\frac{1}{2\pi\sigma_X\sigma_Y\sqrt{1-\rho^2}}\exp\!\left(-\frac{Q(x,y)}{2(1-\rho^2)}\right),\quad \rho=\frac{c_{XY}}{\sigma_X\sigma_Y}$$</div>
+  <div class="formula">$$Q(x,y)=\frac{(x-\eta_X)^2}{\sigma_X^2}-2\rho\frac{(x-\eta_X)(y-\eta_Y)}{\sigma_X\sigma_Y}+\frac{(y-\eta_Y)^2}{\sigma_Y^2}$$</div>
+  <div class="box thm"><span class="tag">📐</span><p>Per v.a. <strong>congiuntamente gaussiane</strong>: incorrelate $\Leftrightarrow$ indipendenti (con $\rho=0$ la $f_{XY}$ si fattorizza). Le marginali di una congiunta gaussiana sono gaussiane.</p></div>
+
+  <h3 id="s4-tlc">4.5 Teorema limite centrale (TLC)</h3>
+  <p>$X_1,\dots,X_n$ indipendenti, stessa distribuzione, media $\eta$ e varianza $\sigma^2$, $Y_n=\sum_i X_i$:</p>
+  <div class="formula">$$\frac{Y_n-n\eta}{\sqrt{n}\,\sigma}\xrightarrow[n\to\infty]{}\mathcal{N}(0,1)\qquad\Longrightarrow\qquad Y_n\approx\mathcal{N}(n\eta,\,n\sigma^2)$$</div>
+  <p>Per somme di tante v.a. iid si tratta la somma come gaussiana e si usa $Q$. Se la grandezza cercata è funzione della somma (es. resistori in parallelo: $1/R_{par}=\sum 1/R_i$), si applica il TLC alla quantità che si <em>somma</em>.</p>
+</section>
+
+<section id="sec5">
+  <h2><span class="num">5</span> Processi aleatori</h2>
+
+  <h3 id="s5-def">5.1 Definizione</h3>
+  <p>$X(t,\omega)$ è una famiglia di funzioni del tempo. Fissato $\omega$ → <strong>realizzazione</strong> (funzione deterministica); fissato $t$ → <strong>variabile aleatoria</strong> $X(t)$; fissati entrambi → un numero.</p>
+
+  <h3 id="s5-descr">5.2 Descrizione statistica</h3>
+  <p><strong>Diretta:</strong> distribuzioni congiunte di ogni ordine. <strong>Parametrica:</strong> $X(t)=s(t;\theta_1,\dots)$ con parametri aleatori (es. $X(t)=a\cos(2\pi f_0 t+\Theta)$).</p>
+
+  <h3 id="s5-ordini">5.3 Primo e secondo ordine</h3>
+  <div class="formula">$$\eta_X(t)=E[X(t)]\qquad P_X(t)=E[X^2(t)]\qquad \sigma_X^2(t)=P_X(t)-\eta_X^2(t)$$</div>
+  <div class="formula named"><span class="lbl">autocorrelazione / autocovarianza</span> $$R_X(t_1,t_2)=E[X(t_1)X(t_2)]\qquad C_X(t_1,t_2)=R_X-\eta_X(t_1)\eta_X(t_2)$$</div>
+  <p>Casi $t_1=t_2$: $R_X(t,t)=P_X(t)$, $C_X(t,t)=\sigma_X^2(t)$.</p>
+
+  <h3 id="s5-staz">5.4 Stazionarietà</h3>
+  <div class="box def"><span class="tag">📘 Senso lato (SSL)</span>
+    <p>$\eta_X(t)=\eta_X$ <strong>costante</strong> <em>e</em> $R_X(t_1,t_2)=R_X(\tau)$ con $\tau=t_2-t_1$.</p></div>
+  <p>Gerarchia: senso stretto $\Rightarrow$ ordine 2 $\Rightarrow$ SSL.</p>
+  <div class="box warn"><span class="tag">⚠️</span><p>Per la SSL servono <strong>entrambe</strong> le condizioni: se $R_X$ dipende solo da $\tau$ ma la media varia col tempo, NON è SSL.</p></div>
+
+  <h3 id="s5-acf">5.5 Autocorrelazione (ACF)</h3>
+  <p>Per processo reale SSL, $R_X(\tau)=E[X(t)X(t+\tau)]$:</p>
+  <div class="formula">$$R_X(\tau)=R_X(-\tau)\ \text{(pari)}\qquad |R_X(\tau)|\le R_X(0)=P_X\qquad \lim_{\tau\to\infty}R_X(\tau)=\eta_X^2$$</div>
+  <p>Una componente periodica nel segnale compare anche nell'ACF. Il <strong>tempo di correlazione</strong> $\tau_{cor}$ è la distanza oltre cui i campioni diventano incorrelati.</p>
+
+  <h3 id="s5-filtro">5.6 Filtraggio con sistemi LTI</h3>
+  <p>$Y(t)=X(t)\ast h(t)$. In generale $\eta_Y(t)=\eta_X(t)\ast h(t)$. Se $X$ è SSL, anche $Y$ lo è e:</p>
+  <div class="formula">$$\eta_Y=\eta_X\,H(0)\qquad R_Y(\tau)=R_X(\tau)\ast r_h(\tau),\quad r_h(\tau)=h(\tau)\ast h(-\tau)$$</div>
+
+  <h3 id="s5-dsp">5.7 Densità spettrale di potenza (Wiener–Khintchine)</h3>
+  <div class="formula">$$S_X(f)=\int_{-\infty}^{+\infty}R_X(\tau)\,e^{-j2\pi f\tau}\,d\tau\qquad P_X=R_X(0)=\int_{-\infty}^{+\infty}S_X(f)\,df$$</div>
+  <p>$S_X(f)$ è reale, pari e non negativa. Filtraggio in frequenza:</p>
+  <div class="formula named"><span class="lbl">relazione del filtraggio</span> $$S_Y(f)=S_X(f)\,|H(f)|^2$$</div>
+
+  <h3 id="s5-bianco">5.8 Rumore bianco</h3>
+  <div class="formula">$$S_X(f)=\xi\ \text{(costante)}\iff R_X(\tau)=\xi\,\delta(\tau)$$</div>
+  <p>Media nulla, campioni a istanti diversi incorrelati. Astrazione (potenza infinita), ma il rumore termico è bianco entro qualunque banda utile. Spesso $S_W(f)=N_0/2$.</p>
+
+  <h3 id="s5-gauss">5.9 Processi gaussiani e applicazione</h3>
+  <div class="box thm"><span class="tag">📐 Proprietà</span>
+    <ul>
+      <li>Campioni incorrelati $\Rightarrow$ indipendenti (congiuntamente gaussiani).</li>
+      <li>Gaussiano + SSL $\Rightarrow$ anche SSS.</li>
+      <li>Il filtraggio LTI conserva la gaussianità (uscita descritta completamente da $\eta_Y$, $R_Y$).</li>
+    </ul>
+  </div>
+  <div class="box def"><span class="tag">📘 Applicazione: rumore bianco + PAM</span>
+    <p>$W(t)$ bianco gaussiano, DSP $N_0/2$, filtro passa-basso ideale banda $B$ → $N(t)\in\mathcal{N}(0,N_0B)$ (varianza $\sigma_N^2=\int_{-B}^{B}\frac{N_0}{2}df=N_0B$). Campioni a $2B$ indipendenti. Con PAM $x_k\in\{-1,+1\}$ e soglia 0:</p>
+    <div class="formula">$$P_e=Q\!\left(\frac{1}{\sqrt{N_0 B}}\right)$$</div>
+  </div>
+</section>
+
+<section id="app">
+  <h2>Appendici</h2>
+  <p class="lead">Riferimenti rapidi per il ripasso e per impostare gli esercizi.</p>
+
+  <!-- A: distribuzioni -->
+  <h3 id="app-distrib">A · Tabella delle distribuzioni</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Distribuzione</th><th>PMF / PDF</th><th>Dominio</th><th>Media</th><th>Varianza</th><th>Dove si usa</th></tr></thead>
+    <tbody>
+      <tr><td>Bernoulli$(p)$</td><td>$P(1)=p,\ P(0)=1-p$</td><td>$\{0,1\}$</td><td>$p$</td><td>$p(1-p)$</td><td>singolo bit / successo</td></tr>
+      <tr><td>Binomiale $B(p,N)$</td><td>$\binom{N}{k}p^k(1-p)^{N-k}$</td><td>$k=0,\dots,N$</td><td>$Np$</td><td>$Np(1-p)$</td><td>n. successi su $N$ prove</td></tr>
+      <tr><td>Poisson$(\Lambda)$</td><td>$\dfrac{\Lambda^k}{k!}e^{-\Lambda}$</td><td>$k=0,1,\dots$</td><td>$\Lambda$</td><td>$\Lambda$</td><td>conteggi / arrivi rari</td></tr>
+      <tr><td>Uniforme $U(a,b)$</td><td>$\dfrac{1}{b-a}$</td><td>$[a,b]$</td><td>$\dfrac{a+b}{2}$</td><td>$\dfrac{(b-a)^2}{12}$</td><td>fase, quantizzazione</td></tr>
+      <tr><td>Esponenziale $\text{Exp}(\lambda)$</td><td>$\dfrac{1}{\lambda}e^{-x/\lambda}$</td><td>$x\ge0$</td><td>$\lambda$</td><td>$\lambda^2$</td><td>tempi di guasto (senza memoria)</td></tr>
+      <tr><td>Gaussiana $\mathcal{N}(\eta,\sigma^2)$</td><td>$\dfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\eta)^2/2\sigma^2}$</td><td>$\mathbb{R}$</td><td>$\eta$</td><td>$\sigma^2$</td><td>rumore, somme (TLC)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- B: formulario -->
+  <h3 id="app-formulario">B · Formulario compatto</h3>
+
+  <h4>Probabilità</h4>
+  <div class="box formula" style="text-align:left">
+    <p>$P(A^c)=1-P(A)$ &nbsp;·&nbsp; $P(A\cup B)=P(A)+P(B)-P(A\cap B)$</p>
+    <p>$P(A\mid B)=\dfrac{P(A\cap B)}{P(B)}$ &nbsp;·&nbsp; $P(A\cap B)=P(A\mid B)P(B)$ &nbsp;·&nbsp; indip.: $P(A\cap B)=P(A)P(B)$</p>
+    <p>Totale: $P(B)=\sum_i P(B\mid A_i)P(A_i)$ &nbsp;·&nbsp; Bayes: $P(A_i\mid B)=\dfrac{P(B\mid A_i)P(A_i)}{\sum_k P(B\mid A_k)P(A_k)}$</p>
+    <p>Bernoulli: $P(k)=\binom{N}{k}p^k(1-p)^{N-k}$ &nbsp;·&nbsp; $D_{N,k}=\dfrac{N!}{(N-k)!}$, &nbsp;$\binom{N}{k}=\dfrac{N!}{k!(N-k)!}$</p>
+  </div>
+
+  <h4>Variabili aleatorie</h4>
+  <div class="box formula" style="text-align:left">
+    <p>$F_X(x)=P(X\le x)$ &nbsp;·&nbsp; $f_X(x)=\dfrac{dF_X}{dx}$ &nbsp;·&nbsp; $F_X(x)=\displaystyle\int_{-\infty}^x f_X$ &nbsp;·&nbsp; $\displaystyle\int_{-\infty}^{+\infty} f_X=1$</p>
+    <p>$P(x_1\lt X\le x_2)=F_X(x_2)-F_X(x_1)$ &nbsp;·&nbsp; salto $=P(X=\bar x)$</p>
+    <p>$E[X]=\displaystyle\int x f_X\,dx$ &nbsp;·&nbsp; $E[g(X)]=\displaystyle\int g(x) f_X\,dx$ &nbsp;·&nbsp; $\sigma_X^2=E[X^2]-\eta_X^2$</p>
+    <p>Gaussiana: $P(X\gt\gamma)=Q\!\big(\tfrac{\gamma-\eta}{\sigma}\big)$ &nbsp;·&nbsp; $Q(-z)=1-Q(z)$ &nbsp;·&nbsp; $P(|X-\eta|\gt n\sigma)=2Q(n)$</p>
+    <p>Trasformazione: $f_Y(y)=\displaystyle\sum_i \dfrac{f_X(x_i)}{|g'(x_i)|}$ &nbsp;·&nbsp; Chebyshev: $P(|X-\eta|\ge k\sigma)\le\dfrac1{k^2}$</p>
+  </div>
+
+  <h4>Sistemi di variabili aleatorie</h4>
+  <div class="box formula" style="text-align:left">
+    <p>marginale: $f_X(x)=\displaystyle\int f_{XY}(x,y)\,dy$ &nbsp;·&nbsp; indip.: $f_{XY}=f_X f_Y$</p>
+    <p>$r_{XY}=E[XY]$ &nbsp;·&nbsp; $c_{XY}=r_{XY}-\eta_X\eta_Y$ &nbsp;·&nbsp; $\rho_{XY}=\dfrac{c_{XY}}{\sigma_X\sigma_Y}$, $\ |\rho_{XY}|\le1$</p>
+    <p>$\operatorname{Var}(X+Y)=\operatorname{Var}(X)+\operatorname{Var}(Y)+2c_{XY}$ &nbsp;·&nbsp; indip. $\Rightarrow$ incorrelate (non viceversa)</p>
+    <p>TLC: $\dfrac{Y_n-n\eta}{\sqrt n\,\sigma}\to\mathcal{N}(0,1)$, &nbsp;con $Y_n=\sum X_i$</p>
+  </div>
+
+  <h4>Processi aleatori</h4>
+  <div class="box formula" style="text-align:left">
+    <p>$\eta_X(t)=E[X(t)]$ &nbsp;·&nbsp; $R_X(t_1,t_2)=E[X(t_1)X(t_2)]$ &nbsp;·&nbsp; $C_X=R_X-\eta_X\eta_X$</p>
+    <p>$R_X(t,t)=P_X$ &nbsp;·&nbsp; SSL: $\eta_X$ cost. e $R_X(\tau)$ &nbsp;·&nbsp; ACF pari, $|R_X(\tau)|\le R_X(0)=P_X$, $\ R_X(\infty)=\eta_X^2$</p>
+    <p>Filtraggio: $\eta_Y=\eta_X H(0)$ &nbsp;·&nbsp; $R_Y(\tau)=R_X(\tau)\ast r_h(\tau)$ &nbsp;·&nbsp; $S_Y(f)=S_X(f)|H(f)|^2$</p>
+    <p>Wiener–Khintchine: $S_X(f)=\mathcal{F}\{R_X(\tau)\}$ &nbsp;·&nbsp; $P_X=R_X(0)=\displaystyle\int S_X(f)\,df$</p>
+    <p>Bianco: $S_X(f)=\xi\Leftrightarrow R_X(\tau)=\xi\,\delta(\tau)$ &nbsp;·&nbsp; PAM: $N(t)\in\mathcal{N}(0,N_0B)$, $\ P_e=Q\!\big(\tfrac{1}{\sqrt{N_0B}}\big)$</p>
+  </div>
+
+  <!-- C: metodo -->
+  <h3 id="app-metodo">C · Come imposto l'esercizio</h3>
+  <div class="box intu">
+    <span class="tag">💡 Probabilità: quale strumento?</span>
+    <ul>
+      <li>Esiti equiprobabili e devo <em>contare</em> → modello uniforme + combinatoria (ordine conta? disposizioni; no? combinazioni).</li>
+      <li>Compaiono parole "<em>dato che / sapendo che</em>" → probabilità condizionata.</li>
+      <li>Conosco le <em>cause</em> e voglio l'effetto → probabilità totale. Ho osservato l'effetto e voglio la causa → Bayes.</li>
+      <li>"<em>$k$ volte su $N$ prove indipendenti</em>" → formula di Bernoulli (binomiale).</li>
+      <li>"<em>almeno uno</em>" → conviene il complementare $1-P(\text{nessuno})$.</li>
+    </ul>
+  </div>
+  <div class="box intu">
+    <span class="tag">💡 Variabili aleatorie</span>
+    <ul>
+      <li>Riconosci la distribuzione dai dati (intervallo uniforme, tempo di attesa → esponenziale, conteggio → Poisson, "campana"/rumore → gaussiana).</li>
+      <li>Probabilità su una gaussiana → <em>standardizza</em> e usa $Q$: $P(X\gt\gamma)=Q\big(\tfrac{\gamma-\eta}{\sigma}\big)$.</li>
+      <li>$Y=g(X)$: se $Y$ è discreta somma le masse; se continua e monotona usa $f_Y=f_X/|g'|$; più soluzioni → sommale.</li>
+      <li>Serve solo la media di $g(X)$? Teorema dell'aspettazione, niente $f_Y$.</li>
+      <li>Varianza: quasi sempre $\sigma^2=E[X^2]-\eta^2$.</li>
+    </ul>
+  </div>
+  <div class="box intu">
+    <span class="tag">💡 Sistemi di v.a. e TLC</span>
+    <ul>
+      <li>Chiede "sono indipendenti?" dopo aver trovato $c_{XY}=0$: ricorda che incorrelate ⇏ indipendenti (a meno che siano congiuntamente gaussiane).</li>
+      <li>Somma di <em>tante</em> v.a. iid → TLC: tratta la somma come $\mathcal{N}(n\eta,\,n\sigma^2)$ e usa $Q$.</li>
+      <li>Funzioni della somma (es. parallelo di resistori): applica il TLC alla quantità che <em>si somma</em> (le conduttanze $1/R_i$), poi torna alla grandezza voluta.</li>
+    </ul>
+  </div>
+  <div class="box intu">
+    <span class="tag">💡 Processi aleatori (schema tipico)</span>
+    <ol>
+      <li>Scrivi il processo e identifica le v.a. aleatorie (ampiezza, fase…).</li>
+      <li>Calcola $\eta_X(t)=E[X(t)]$ (media sui parametri aleatori).</li>
+      <li>Calcola $R_X(t_1,t_2)=E[X(t_1)X(t_2)]$ (usa le formule di prostaferesi per i coseni).</li>
+      <li>SSL? media costante <strong>e</strong> $R_X$ funzione della sola $\tau=t_2-t_1$.</li>
+      <li>Se SSL: $S_X(f)=\mathcal{F}\{R_X(\tau)\}$; potenza $P_X=R_X(0)=\int S_X\,df$.</li>
+      <li>Filtro LTI: $S_Y(f)=S_X(f)|H(f)|^2$; per il rumore poi calcola $P_e$ con $Q$.</li>
+    </ol>
+  </div>
+
+  <!-- D: glossario -->
+  <h3 id="app-glossario">D · Glossario dei simboli</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Simbolo</th><th>Significato</th></tr></thead>
+    <tbody>
+      <tr><td>$\Omega,\ S,\ P(\cdot)$</td><td>spazio campione, classe degli eventi, funzione probabilità</td></tr>
+      <tr><td>$\varnothing,\ A^c$</td><td>insieme vuoto, complementare di $A$</td></tr>
+      <tr><td>$A\cup B,\ A\cap B$</td><td>unione ("o"), intersezione ("e")</td></tr>
+      <tr><td>$P(A\mid B)$</td><td>probabilità di $A$ dato $B$</td></tr>
+      <tr><td>$X,\ x$</td><td>variabile aleatoria (maiuscola), suo valore (minuscola)</td></tr>
+      <tr><td>$F_X(x)$</td><td>funzione di distribuzione (CDF), $P(X\le x)$</td></tr>
+      <tr><td>$f_X(x),\ p_X(x)$</td><td>densità (PDF, continue), massa (PMF, discrete)</td></tr>
+      <tr><td>$\eta_X=E[X]$</td><td>valor medio</td></tr>
+      <tr><td>$\sigma_X^2,\ \sigma_X$</td><td>varianza, deviazione standard</td></tr>
+      <tr><td>$P_X=E[X^2]$</td><td>valor quadratico medio (potenza media statistica)</td></tr>
+      <tr><td>$\Phi(z),\ Q(z)$</td><td>CDF della gaussiana standard; coda $Q(z)=1-\Phi(z)$</td></tr>
+      <tr><td>$\delta(\cdot),\ u(\cdot)$</td><td>delta di Dirac, gradino unitario</td></tr>
+      <tr><td>$r_{XY},\ c_{XY},\ \rho_{XY}$</td><td>correlazione, covarianza, coefficiente di correlazione</td></tr>
+      <tr><td>$R_X(\tau),\ C_X(\tau)$</td><td>autocorrelazione, autocovarianza (processi)</td></tr>
+      <tr><td>$S_X(f)$</td><td>densità spettrale di potenza</td></tr>
+      <tr><td>$H(f),\ h(t)$</td><td>risposta in frequenza / impulsiva di un sistema LTI</td></tr>
+      <tr><td>$\ast,\ \tau$</td><td>convoluzione, ritardo temporale $t_2-t_1$</td></tr>
+      <tr><td>$N_0/2,\ B$</td><td>DSP (bilatera) del rumore bianco, banda del filtro</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <hr>
+  <p style="text-align:center;color:var(--muted);font-size:.92rem">
+    Sintesi rapida di <strong>Comunicazioni Numeriche</strong> (075II) · concetti essenziali e formule per gli esercizi.<br>
+    Per gli esercizi svolti passo-passo vedi la versione completa. Formule rese con KaTeX (CDN).
+  </p>
+</section>
+
+</main>
+</div>
+<button id="to-top" title="Torna su" aria-label="Torna su">↑</button>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>/* === Inizializzazione === */
+(function () {
+  // Render delle formule (katex + auto-render sono già caricati, script sincroni)
+  if (window.renderMathInElement) {
+    renderMathInElement(document.body, {
+      delimiters: [
+        {left: "$$", right: "$$", display: true},
+        {left: "\\[", right: "\\]", display: true},
+        {left: "$", right: "$", display: false},
+        {left: "\\(", right: "\\)", display: false}
+      ],
+      throwOnError: false
+    });
+  }
+
+  // Tema chiaro/scuro con memoria
+  var root = document.documentElement, tbtn = document.getElementById("theme-btn");
+  function setTheme(t){ root.setAttribute("data-theme", t); tbtn.textContent = (t==="dark"?"☀️":"🌙");
+    try{ localStorage.setItem("cn-theme", t);}catch(e){} }
+  var saved; try{ saved = localStorage.getItem("cn-theme"); }catch(e){}
+  if(saved) setTheme(saved);
+  tbtn.addEventListener("click", function(){ setTheme(root.getAttribute("data-theme")==="dark"?"light":"dark"); });
+
+  // Menu mobile
+  var sb = document.getElementById("sidebar"), bd = document.getElementById("backdrop"),
+      mt = document.getElementById("menu-toggle");
+  function closeMenu(){ sb.classList.remove("open"); bd.classList.remove("show"); }
+  mt.addEventListener("click", function(){ sb.classList.toggle("open"); bd.classList.toggle("show"); });
+  bd.addEventListener("click", closeMenu);
+  sb.addEventListener("click", function(e){ if(e.target.tagName==="A") closeMenu(); });
+
+  // Torna su
+  var tt = document.getElementById("to-top");
+  window.addEventListener("scroll", function(){ tt.style.display = window.scrollY>500?"block":"none"; });
+  tt.addEventListener("click", function(){ window.scrollTo({top:0, behavior:"smooth"}); });
+
+  // Scrollspy
+  var links = Array.prototype.slice.call(document.querySelectorAll("#sidebar nav a"));
+  var map = {};
+  links.forEach(function(a){ var id=a.getAttribute("href").slice(1); var el=document.getElementById(id); if(el) map[id]=a; });
+  var targets = Object.keys(map).map(function(id){ return document.getElementById(id); });
+  if("IntersectionObserver" in window){
+    var current=null;
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){
+          if(current) current.classList.remove("active");
+          current = map[en.target.id];
+          if(current){ current.classList.add("active"); current.scrollIntoView({block:"nearest"}); }
+        }
+      });
+    }, {rootMargin:"0px 0px -75% 0px", threshold:0});
+    targets.forEach(function(t){ obs.observe(t); });
+  }
+})();
+</script>
+</body>
+</html>
