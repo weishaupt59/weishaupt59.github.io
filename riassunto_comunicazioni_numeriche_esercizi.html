@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comunicazioni Numeriche — Riassunto per esercizi</title>
+
+<!-- MathJax v3 (richiede internet al primo caricamento) -->
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    processEscapes: true
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+
+<style>
+:root{
+  --bg:#f6f7fb; --panel:#ffffff; --ink:#1c2230; --muted:#5a6478;
+  --line:#e3e7ef; --sidebar:#11203a; --sidebar-ink:#cfd8ea; --sidebar-hi:#4da3ff;
+  --def:#2563eb; --def-bg:#eef4ff;
+  --key:#0e9f6e; --key-bg:#e9faf3;
+  --recipe:#b45309; --recipe-bg:#fff7e8;
+  --trans:#7c3aed; --trans-bg:#f4eefe;
+  --ex:#0891b2; --ex-bg:#e7f9fe;
+  --warn:#dc2626; --warn-bg:#fdeced;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:15px}
+
+/* ===== Sidebar ===== */
+#sidebar{position:fixed;top:0;left:0;width:288px;height:100vh;background:var(--sidebar);color:var(--sidebar-ink);overflow-y:auto;padding:18px 14px 60px;z-index:20}
+#sidebar h1{font-size:16px;color:#fff;margin:0 0 4px;line-height:1.25}
+#sidebar .sub{font-size:11.5px;color:#8fa1c4;margin-bottom:14px}
+#search{width:100%;padding:9px 11px;border-radius:9px;border:1px solid #28395c;background:#0b1830;color:#eaf0fb;font-size:13px;margin-bottom:6px}
+#search::placeholder{color:#7b89a8}
+#searchInfo{font-size:11px;color:#8fa1c4;min-height:15px;margin-bottom:10px}
+#nav a{display:block;color:var(--sidebar-ink);text-decoration:none;font-size:13px;padding:4px 9px;border-radius:7px;border-left:2px solid transparent}
+#nav a:hover{background:#1c2c4a;color:#fff}
+#nav a.modhead{margin-top:11px;font-weight:700;color:#9fb6e0;font-size:11px;text-transform:uppercase;letter-spacing:.4px;padding-left:6px;pointer-events:none}
+#nav a.active{border-left-color:var(--sidebar-hi);background:#1c2c4a;color:#fff}
+
+/* ===== Main ===== */
+main{margin-left:288px;padding:34px 46px 120px;max-width:1000px}
+header.page{margin-bottom:26px}
+header.page h2{margin:0 0 6px;font-size:27px}
+header.page p{margin:3px 0;color:var(--muted);font-size:13.5px}
+.note-banner{background:#fff8e6;border:1px solid #f3dca0;color:#7a5b09;padding:9px 13px;border-radius:9px;font-size:12.5px;margin-top:12px}
+
+section.topic{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin-bottom:22px;box-shadow:0 1px 2px rgba(20,30,60,.04)}
+section.topic > h3{margin:0 0 4px;font-size:20px;color:#0f1b33;border-bottom:2px solid var(--line);padding-bottom:9px}
+section.topic > .src{font-size:11px;color:#9aa4b8;margin:0 0 14px;font-style:italic}
+h4{font-size:15.5px;margin:18px 0 7px;color:#22304d}
+h4:first-of-type{margin-top:6px}
+p{margin:7px 0}
+ul{margin:7px 0 7px 4px;padding-left:20px}
+li{margin:3px 0}
+code{background:#eef1f7;padding:1px 5px;border-radius:5px;font-size:12.5px;color:#b03060}
+
+.box{border-left:4px solid var(--line);border-radius:0 9px 9px 0;padding:11px 15px;margin:11px 0;font-size:14px}
+.box .tag{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:1px 8px;border-radius:20px;margin-bottom:6px}
+.def{background:var(--def-bg);border-color:var(--def)}    .def .tag{background:var(--def);color:#fff}
+.key{background:var(--key-bg);border-color:var(--key)}    .key .tag{background:var(--key);color:#fff}
+.recipe{background:var(--recipe-bg);border-color:var(--recipe)} .recipe .tag{background:var(--recipe);color:#fff}
+.trans{background:var(--trans-bg);border-color:var(--trans)}  .trans .tag{background:var(--trans);color:#fff}
+.ex{background:var(--ex-bg);border-color:var(--ex)}       .ex .tag{background:var(--ex);color:#fff}
+.warn{background:var(--warn-bg);border-color:var(--warn)}  .warn .tag{background:var(--warn);color:#fff}
+.recipe ol{margin:5px 0 2px;padding-left:20px}
+.recipe ol li{margin:4px 0}
+
+table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:middle}
+th{background:#f0f3fa;font-weight:600}
+tr:nth-child(even) td{background:#fafbfe}
+.tbl-narrow td:first-child,.tbl-narrow th:first-child{white-space:nowrap}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+
+mjx-container{overflow-x:auto;overflow-y:hidden}
+
+.hidden{display:none !important}
+mark{background:#ffe58a;padding:0 1px}
+
+#toTop{position:fixed;right:22px;bottom:22px;background:var(--sidebar);color:#fff;border:none;border-radius:50%;width:44px;height:44px;font-size:19px;cursor:pointer;opacity:.85;z-index:30;display:none}
+#toTop:hover{opacity:1}
+
+/* ===== Mobile ===== */
+#menuBtn{display:none}
+@media(max-width:900px){
+  #sidebar{transform:translateX(-100%);transition:transform .25s}
+  #sidebar.open{transform:translateX(0)}
+  main{margin-left:0;padding:70px 18px 100px}
+  #menuBtn{display:block;position:fixed;top:12px;left:12px;z-index:40;background:var(--sidebar);color:#fff;border:none;border-radius:8px;padding:9px 13px;font-size:15px;cursor:pointer}
+}
+
+/* ===== Print ===== */
+@media print{
+  #sidebar,#toTop,#menuBtn{display:none}
+  main{margin:0;max-width:100%;padding:0}
+  section.topic{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+  body{background:#fff;font-size:11.5px}
+  .note-banner{display:none}
+}
+</style>
+</head>
+<body>
+
+<button id="menuBtn">☰ Indice</button>
+
+<!-- ===================== SIDEBAR ===================== -->
+<aside id="sidebar">
+  <h1>Comunicazioni Numeriche</h1>
+  <div class="sub">Riassunto operativo per gli esercizi · Sanguinetti / Andriolli</div>
+  <input id="search" type="text" placeholder="🔎 Cerca (es. Nyquist, Hamming, SER…)" autocomplete="off">
+  <div id="searchInfo"></div>
+  <nav id="nav">
+    <a class="modhead">0 · Prerequisiti</a>
+    <a href="#m0">Numeri complessi & sinusoidi</a>
+    <a class="modhead">1 · Segnali</a>
+    <a href="#m1">Tipi di segnale, energia & potenza</a>
+    <a class="modhead">2 · Potenza, dB, SNR</a>
+    <a href="#m2">Decibel, Friis, SNR, Shannon</a>
+    <a class="modhead">3 · Fourier</a>
+    <a href="#m3">Trasformata (TCF) & trasformate notevoli</a>
+    <a href="#m4">Teoremi di Fourier & convoluzione</a>
+    <a href="#m5">Banda di un segnale</a>
+    <a class="modhead">4 · Sistemi & campionamento</a>
+    <a href="#m6">Sistemi LTI (SLS) & filtri</a>
+    <a href="#m7">Campionamento & ricostruzione</a>
+    <a class="modhead">5 · Codici</a>
+    <a href="#m8">Teoria dei codici di canale</a>
+    <a class="modhead">6 · Trasmissione</a>
+    <a href="#m9">M-PAM banda base</a>
+    <a href="#m10">Sistema PAM, ISI, Nyquist, filtro adattato</a>
+    <a href="#m11">Prestazioni: SER M-PAM & efficienza</a>
+    <a href="#m12">Passband PAM & QAM</a>
+    <a class="modhead">Appendice</a>
+    <a href="#mq">Funzione Q (tabella)</a>
+    <a href="#mf">Formulario lampo</a>
+  </nav>
+</aside>
+
+<!-- ===================== MAIN ===================== -->
+<main>
+<header class="page">
+  <h2>Riassunto per gli esercizi</h2>
+  <p>Tutto il necessario per risolvere gli esercizi del corso, organizzato per moduli. Ogni argomento riporta <b>definizioni</b>, <b>formule chiave</b> e un riquadro <b>«Come si risolve»</b>.</p>
+  <p>Legenda riquadri: <span style="color:var(--def)">■ Definizione</span> · <span style="color:var(--key)">■ Formula chiave</span> · <span style="color:var(--recipe)">■ Come si risolve</span> · <span style="color:var(--trans)">■ Trasformata notevole</span> · <span style="color:var(--ex)">■ Esempio</span></p>
+  <div class="note-banner">⚠️ Le formule sono rese con <b>MathJax via CDN</b>: serve la connessione internet al primo caricamento. Per una versione 100% offline, chiedimelo.</div>
+</header>
+
+<!-- ===== MOD 0 ===== -->
+<section class="topic" id="m0">
+<h3>0 · Numeri complessi & sinusoidi</h3>
+<p class="src">Fonti: 2026_03_03, 2026_03_06</p>
+
+<div class="box def"><span class="tag">Definizione</span>
+Cartesiana $z=a+jb$, coniugato $z^*=a-jb$. Polare $z=\rho\,e^{j\theta}$ con modulo $\rho=|z|=\sqrt{a^2+b^2}$ e fase $\theta=\angle z=\operatorname{atan2}(b,a)$.</div>
+
+<div class="box key"><span class="tag">Formule chiave</span>
+$$a=\rho\cos\theta,\quad b=\rho\sin\theta,\qquad z\,z^*=|z|^2=a^2+b^2$$
+$$\text{Eulero:}\quad e^{j\theta}=\cos\theta+j\sin\theta,\qquad \cos\theta=\tfrac{e^{j\theta}+e^{-j\theta}}{2},\quad \sin\theta=\tfrac{e^{j\theta}-e^{-j\theta}}{2j}$$
+Prodotto/divisione in polare: $\rho_1e^{j\theta_1}\cdot\rho_2e^{j\theta_2}=\rho_1\rho_2 e^{j(\theta_1+\theta_2)}$, $\;\dfrac{z_1}{z_2}=\dfrac{\rho_1}{\rho_2}e^{j(\theta_1-\theta_2)}$.</div>
+
+<p>Sinusoide: $x(t)=A\cos(2\pi f_0 t+\varphi)$, periodo $T_0=1/f_0$. Esponenziale complesso $e^{j2\pi f_0 t}$ = <b>vettore rotante</b> antiorario a velocità $f_0$ (proiezioni: $\cos$ su Re, $\sin$ su Im). Vale $\sin(x)=\cos(x-\pi/2)$.</p>
+</section>
+
+<!-- ===== MOD 1 ===== -->
+<section class="topic" id="m1">
+<h3>1 · Tipi di segnale, energia & potenza</h3>
+<p class="src">Fonti: 2026_03_06, 2026_04_16</p>
+
+<h4>Classificazione</h4>
+<ul>
+<li><b>Deterministico</b> (noto, analitico) vs <b>aleatorio</b> (statistico, es. rumore).</li>
+<li><b>Tempo continuo</b> (TC) vs <b>tempo discreto</b> (TD).</li>
+<li>Combinando tempo×ampiezza: <b>Analogico</b> (cont/cont) · <b>Quantizzato</b> (cont/disc) · <b>Sequenza</b> (disc/cont) · <b>Digitale</b> (disc/disc).</li>
+</ul>
+<div class="box def"><span class="tag">ADC & quantizzazione</span>
+Quantizzatore con $L$ livelli usa $n=\log_2 L$ bit/campione (uniforme: semplice; non-uniforme: adatta la precisione). Tipico audio: 8–24 bit.</div>
+
+<h4>Energia e potenza</h4>
+<div class="box key"><span class="tag">Formule chiave</span>
+$$E_x=\int_{-\infty}^{+\infty}|x(t)|^2\,dt\qquad\text{(energia)}$$
+$$P_x=\lim_{T\to\infty}\frac{1}{T}\int_{-T/2}^{T/2}|x(t)|^2\,dt\qquad\text{(potenza media)}$$
+Segnale <b>periodico</b> $T_0$: $\;P_x=\dfrac{1}{T_0}\displaystyle\int_{T_0}|x(t)|^2\,dt$.</div>
+<ul>
+<li>Segnale di <b>energia</b> ($E_x$ finita) $\Rightarrow P_x=0$.</li>
+<li>Segnale di <b>potenza</b> ($P_x$ finita) $\Rightarrow E_x=\infty$.</li>
+</ul>
+<table class="tbl-narrow">
+<tr><th>Segnale</th><th>Energia / Potenza</th></tr>
+<tr><td>$A\cos(2\pi f_0t)$, $A\sin(\cdot)$</td><td>$P=A^2/2$, $E=\infty$</td></tr>
+<tr><td>$e^{j2\pi f_0t}$ (esp. complesso)</td><td>$P=1$</td></tr>
+<tr><td>gradino $u(t)$</td><td>$P=1/2$, $E=\infty$</td></tr>
+<tr><td>$e^{-t/T}u(t)$ (esp. monolatero)</td><td>$E=T/2$, $P=0$</td></tr>
+<tr><td>batteria ideale (costante)</td><td>$E=\infty$ (def. mal posta)</td></tr>
+</table>
+<p>Frequenza $f=1/T$ [Hz]; lunghezza d'onda $\lambda=c/f$ ($c=3\cdot10^8$ m/s).</p>
+
+<div class="box recipe"><span class="tag">Come si risolve — calcolo di $E$ o $P$</span>
+<ol>
+<li>Capisci se è a energia finita (impulso/durata limitata o decadente) o di potenza (periodico/costante).</li>
+<li>Energia: integra $|x|^2$ su tutto l'asse. Potenza periodica: media di $|x|^2$ su <b>un</b> periodo.</li>
+<li>Sinusoide di ampiezza $A$ → $P=A^2/2$ a memoria. Per somme di sinusoidi a frequenze diverse: $P=\sum A_i^2/2$ (ortogonali).</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 2 ===== -->
+<section class="topic" id="m2">
+<h3>2 · Decibel, potenza ricevuta, SNR</h3>
+<p class="src">Fonti: 2026_03_10</p>
+
+<div class="box key"><span class="tag">Decibel</span>
+$$P_{\text{dB}}=10\log_{10}\frac{P}{P_0}\qquad(\text{ampiezza}:20\log_{10})$$
+<b>dBW</b>: $P_0=1$ W. <b>dBm</b>: $P_0=1$ mW $\Rightarrow$ dBm = dBW + 30.
+Promemoria: $\times2\!\approx\!+3$ dB, $\times4\!\approx\!+6$ dB, $\times10=+10$ dB, $\div2\!\approx\!-3$ dB.</div>
+
+<h4>Potenza ricevuta — equazione di Friis</h4>
+<div class="box key"><span class="tag">Formula chiave</span>
+Antenna isotropica, potenza a distanza $d$: densità $=P_t/(4\pi d^2)$; raccolta da area efficace $A_e$:
+$$P_r=\frac{P_t\,A_e}{4\pi d^2}\qquad\text{(spazio libero)}$$
+Con guadagni di antenna $G_t,G_r$ (Friis):
+$$\boxed{P_r=P_t\,G_t\,G_r\left(\frac{\lambda}{4\pi d}\right)^{2}}\qquad\Rightarrow\; P_r\propto \frac{1}{d^2},\;\;P_r\propto\lambda^2$$
+In ambienti reali l'esponente di $d$ è $>2$ (es. 3.76). Caso isotropico: $G_t=G_r=1$.</div>
+<p>In dB: $P_{r,\text{dB}}=P_{t,\text{dB}}+G_{t,\text{dB}}+G_{r,\text{dB}}-20\log_{10}\!\big(\tfrac{4\pi d}{\lambda}\big)$. Attenuazione di spazio libero tipica: 40–120 dB.</p>
+
+<h4>SNR e capacità</h4>
+<div class="box def"><span class="tag">Definizione</span>
+Quel che conta è il <b>rapporto segnale-rumore</b> $\text{SNR}=P_r/P_n$, non la sola $P_r$. Tipico: $-10$ dB (bordo cella) → $30$ dB (centro cella).</div>
+<div class="box key"><span class="tag">Capacità di Shannon (1948)</span>
+$$C=B\,\log_2(1+\text{SNR})\quad[\text{bit/s}]$$</div>
+
+<div class="box recipe"><span class="tag">Come si risolve — bilancio di potenza / array</span>
+<ol>
+<li>Converti tutto in dB e <b>somma/sottrai</b> (guadagni +, perdite −): più rapido che moltiplicare.</li>
+<li>Friis: attento alle unità ($\lambda=c/f$, $d$ in m). Spesso si chiede $P_r$ o la distanza massima dato un $P_r$ minimo.</li>
+<li><b>Array di $N$ antenne</b> identiche: la potenza/SNR raccolta scala con $N$ (somma coerente); in dB aggiungi $10\log_{10}N$.</li>
+<li>SNR richiesto da una capacità: $\text{SNR}=2^{C/B}-1$.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 3 ===== -->
+<section class="topic" id="m3">
+<h3>3 · Trasformata di Fourier (TCF) & trasformate notevoli</h3>
+<p class="src">Fonti: 2026_03_13, 2026_03_27</p>
+
+<div class="box def"><span class="tag">Definizione</span>
+$$X(f)=\int_{-\infty}^{+\infty}x(t)\,e^{-j2\pi ft}\,dt\quad(\text{analisi})\qquad x(t)=\int_{-\infty}^{+\infty}X(f)\,e^{+j2\pi ft}\,df\quad(\text{sintesi})$$
+Corrispondenza biunivoca $x(t)\leftrightarrow X(f)$. Spettro di ampiezza $|X(f)|$, spettro di fase $\angle X(f)$.</div>
+
+<div class="box key"><span class="tag">Simmetria hermitiana (segnali reali)</span>
+$x(t)$ reale $\Rightarrow X(-f)=X^*(f)$: $|X(f)|$ <b>pari</b>, $\angle X(f)$ <b>dispari</b>. (Non vale per segnali complessi.)</div>
+
+<h4>Trasformate notevoli (da ricordare)</h4>
+<div class="box trans"><span class="tag">Tabella</span>
+<p style="margin:0 0 6px">$\operatorname{sinc}(x)=\dfrac{\sin(\pi x)}{\pi x}$; $\;\operatorname{rect}(t/T)=1$ per $|t|<T/2$; $\;\Lambda(t/T)$ = triangolo base $2T$, altezza 1.</p>
+<table>
+<tr><th>$x(t)$</th><th>$X(f)$</th></tr>
+<tr><td>$\delta(t)$</td><td>$1$</td></tr>
+<tr><td>$1$</td><td>$\delta(f)$</td></tr>
+<tr><td>$\operatorname{rect}(t/T)$</td><td>$T\operatorname{sinc}(fT)$</td></tr>
+<tr><td>$2B\operatorname{sinc}(2Bt)$</td><td>$\operatorname{rect}(f/2B)$</td></tr>
+<tr><td>$\Lambda(t/T)$ (triangolo)</td><td>$T\operatorname{sinc}^2(fT)$</td></tr>
+<tr><td>$e^{-t/T}u(t)$</td><td>$\dfrac{T}{1+j2\pi fT}$</td></tr>
+<tr><td>$e^{-|t|/T}$</td><td>$\dfrac{2T}{1+(2\pi fT)^2}$</td></tr>
+<tr><td>$\operatorname{sgn}(t)$</td><td>$\dfrac{1}{j\pi f}$</td></tr>
+<tr><td>$u(t)$</td><td>$\tfrac12\delta(f)+\dfrac{1}{j2\pi f}$</td></tr>
+<tr><td>$e^{j2\pi f_0 t}$</td><td>$\delta(f-f_0)$</td></tr>
+<tr><td>$\cos(2\pi f_0 t)$</td><td>$\tfrac12[\delta(f-f_0)+\delta(f+f_0)]$</td></tr>
+<tr><td>$\sin(2\pi f_0 t)$</td><td>$\tfrac{1}{2j}[\delta(f-f_0)-\delta(f+f_0)]$</td></tr>
+</table></div>
+
+<h4>Energia in frequenza</h4>
+<div class="box key"><span class="tag">Parseval & densità spettrali</span>
+$$E_x=\int|x(t)|^2dt=\int|X(f)|^2df,\qquad S_x(f)=|X(f)|^2\;\text{(densità spettrale di energia)}$$
+Per segnali di potenza: <b>densità spettrale di potenza</b> (DSP) $S_x(f)$, con $P_x=\int S_x(f)\,df$.</div>
+
+<div class="box def"><span class="tag">Relazione tempo–banda · DFT/FFT</span>
+Durata nel tempo $\Delta t$ e banda $\Delta f$: $\;\Delta t\cdot\Delta f\approx 1$ (segnale breve ⇒ spettro largo, e viceversa). Calcolo numerico TCF: complessità $O(N^2)$; con <b>FFT</b> ($N=2^p$): $O(N\log_2 N)$. ATCF ⇒ IFFT. Spectrum analyzer: <i>frequency range, RBW</i> (separa segnali vicini), <i>noise floor/DANL</i> (sensibilità), <i>dynamic range</i>.</div>
+
+<div class="box recipe"><span class="tag">Come si risolve — energia via Parseval</span>
+<ol>
+<li>Riconosci la coppia notevole (rect↔sinc, exp↔…) per evitare integrali.</li>
+<li>Se l'integrale è più facile in un dominio, usa Parseval per calcolarlo nell'altro.</li>
+<li>Es.: $\int \operatorname{sinc}^2(fT)\,df$ si calcola nel tempo dove la rect è banale.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 4 ===== -->
+<section class="topic" id="m4">
+<h3>4 · Teoremi di Fourier & convoluzione</h3>
+<p class="src">Fonti: 2026_03_17, 2026_03_26</p>
+
+<div class="box key"><span class="tag">Teoremi</span>
+<table>
+<tr><th>Teorema</th><th>Tempo</th><th>Frequenza</th></tr>
+<tr><td>Linearità</td><td>$a\,x_1+b\,x_2$</td><td>$a\,X_1+b\,X_2$</td></tr>
+<tr><td>Dualità</td><td>$X(t)$</td><td>$x(-f)$</td></tr>
+<tr><td>Ritardo</td><td>$x(t-t_0)$</td><td>$X(f)\,e^{-j2\pi f t_0}$</td></tr>
+<tr><td>Modulazione</td><td>$x(t)e^{j2\pi f_0 t}$</td><td>$X(f-f_0)$</td></tr>
+<tr><td>Modulazione (cos)</td><td>$x(t)\cos(2\pi f_0 t)$</td><td>$\tfrac12[X(f\!-\!f_0)+X(f\!+\!f_0)]$</td></tr>
+<tr><td>Derivazione</td><td>$\dfrac{dx}{dt}$</td><td>$j2\pi f\,X(f)$</td></tr>
+<tr><td>Integrazione</td><td>$\int_{-\infty}^{t}x$</td><td>$\dfrac{X(f)}{j2\pi f}+\tfrac12X(0)\delta(f)$</td></tr>
+<tr><td>Cambio scala</td><td>$x(at)$</td><td>$\tfrac{1}{|a|}X(f/a)$</td></tr>
+<tr><td><b>Prodotto</b></td><td>$x(t)\,y(t)$</td><td>$X(f)\otimes Y(f)$</td></tr>
+<tr><td><b>Convoluzione</b></td><td>$x(t)\otimes y(t)$</td><td>$X(f)\,Y(f)$</td></tr>
+</table>
+</div>
+<p><b>Ritardo</b>: cambia solo la fase (cresce linearmente con $f$), non l'ampiezza. <b>Modulazione</b>: trasla lo spettro alla portante $f_0$ → base di modulazione/demodulazione, FDM, radio FM (87.5–108 MHz, canali 200 kHz), DAB, radar.</p>
+
+<div class="box def"><span class="tag">Convoluzione</span>
+$$z(t)=x\otimes y=\int_{-\infty}^{+\infty}x(\tau)\,y(t-\tau)\,d\tau$$
+Metodo grafico: 1) <b>ribalta</b> $y(\alpha)\!\to\!y(-\alpha)$; 2) <b>trasla</b> di $t_0$; 3) <b>moltiplica</b> $x(\alpha)y(t_0-\alpha)$; 4) <b>integra</b>.</div>
+<div class="box key"><span class="tag">Durata della convoluzione</span>
+Se $x$ ha estensione $A$ e $y$ ha estensione $B$, allora $x\otimes y$ ha estensione $\boxed{A+B}$ (somma delle durate).</div>
+
+<div class="box recipe"><span class="tag">Come si risolve</span>
+<ol>
+<li><b>Convoluzione di due rect</b> → triangolo; durata = somma delle basi. Spesso basta la durata, non la forma esatta.</li>
+<li>Per trasformare una convoluzione difficile: passa al dominio frequenza (diventa un prodotto) e viceversa.</li>
+<li><b>Triangolo↔sinc²</b>: ricavalo come $\operatorname{rect}\otimes\operatorname{rect}\xrightarrow{\text{TCF}}(\operatorname{sinc})^2$ (teorema di convoluzione) o con la dualità.</li>
+<li><b>Radar</b>: eco ritardato di $t_0=2d/c$ → usa teorema del ritardo; modula ad alta $f$ per riflessione adeguata (SRR 24 GHz, MRR 76–81 GHz).</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 5 ===== -->
+<section class="topic" id="m5">
+<h3>5 · Banda di un segnale</h3>
+<p class="src">Fonti: 2026_03_27</p>
+
+<div class="box def"><span class="tag">Banda a −3 dB</span>
+La banda $B_{-3\text{dB}}$ è la frequenza alla quale lo spettro di ampiezza scende di 3 dB (cioè a $1/\sqrt2$ del massimo, ovvero metà potenza). Le frequenze sotto $B$ sono "importanti", quelle sopra "trascurabili". Analoghe: bande a $-1,-10,-20$ dB.</div>
+<ul>
+<li><b>rect</b> di durata $T$ → $X=T\operatorname{sinc}(fT)$; il primo nullo è a $f=1/T$.</li>
+<li><b>exp monolatero</b> $e^{-t/T}u(t)$ → $|X|=\dfrac{T}{\sqrt{1+(2\pi fT)^2}}$; banda $-3$ dB dove $(2\pi fT)^2=1$ → $\;B_{-3\text{dB}}=\dfrac{1}{2\pi T}$.</li>
+<li><b>Segnale modulato</b>: due limiti a $-3$ dB attorno a $f_0$; per convenzione la banda è <b>doppia</b> di quella del segnale base.</li>
+</ul>
+<div class="box key"><span class="tag">Banda al 99% dell'energia</span>
+$B$ tale che $\displaystyle\int_{-B}^{B}|X(f)|^2df=0.99\,E_x$. Criterio energetico (più severo del $-3$ dB).</div>
+<div class="box warn"><span class="tag">Importante</span>
+Un segnale a <b>durata finita</b> ha sempre <b>banda infinita</b> (e viceversa): la convoluzione con una sinc produce supporto illimitato. Le bande $-3/-10$ dB servono a <i>confrontare</i> segnali, non a ricostruirli (componenti oltre $-20$ dB possono essere rilevanti).</div>
+
+<div class="box recipe"><span class="tag">Come si risolve — banda</span>
+<ol>
+<li>$-3$ dB: poni $|X(f)|^2=\tfrac12|X(0)|^2$ e risolvi per $f$.</li>
+<li>99%: imposta l'integrale di $|X|^2$ pari a $0.99E_x$ e ricava $B$.</li>
+<li>Modulato: calcola la banda base, poi raddoppia.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 6 ===== -->
+<section class="topic" id="m6">
+<h3>6 · Sistemi LTI (SLS) & filtri</h3>
+<p class="src">Fonti: 2026_04_10</p>
+
+<div class="box def"><span class="tag">Proprietà</span>
+<b>Lineare</b>: $T\{ax_1+bx_2\}=aT\{x_1\}+bT\{x_2\}$. <b>Stazionario</b> (tempo-invariante): le proprietà non variano nel tempo. <b>Causale</b>: l'uscita dipende solo da ingressi presenti/passati. <b>Senza memoria</b>: dipende solo dall'istante corrente.</div>
+
+<div class="box key"><span class="tag">Sistema Lineare Stazionario (SLS)</span>
+$$y(t)=x(t)\otimes h(t),\qquad Y(f)=X(f)\,H(f)$$
+$h(t)$ = <b>risposta impulsiva</b> (caratterizza il sistema); $H(f)=\text{TCF}\{h\}$ = <b>risposta in frequenza</b>.
+<br>Cascata: $H=H_1H_2$ ($h=h_1\otimes h_2$). Parallelo: $H=H_1+H_2$.
+<br>SLS <b>causale</b> ⇔ $h(t)=h(t)\,u(t)$.</div>
+
+<h4>Filtri ideali</h4>
+<table>
+<tr><th>Filtro</th><th>$H(f)$ (banda $B$)</th></tr>
+<tr><td>Passa-basso (LP)</td><td>$1$ per $|f|<B$, $0$ altrove</td></tr>
+<tr><td>Passa-alto (HP)</td><td>$1-\operatorname{rect}(f/2B)$</td></tr>
+<tr><td>Passa-banda (BP)</td><td>$1$ in $f_0-B<|f|<f_0+B$</td></tr>
+<tr><td>Elimina-banda (BS)</td><td>$1$ tranne attorno a $\pm f_0$</td></tr>
+</table>
+<div class="box key"><span class="tag">Filtro non distorcente</span>
+Uscita = replica fedele: $y(t)=A\,x(t-t_0)$, cioè
+$$|H(f)|=A\ \text{(ampiezza PIATTA)},\qquad \angle H(f)=-2\pi f t_0\ \text{(fase LINEARE)}$$
+Necessario solo <b>nella banda del segnale</b>.</div>
+
+<div class="box recipe"><span class="tag">Come si risolve</span>
+<ol>
+<li>Ricavare $h(t)$: dai un $\delta(t)$ in ingresso, oppure antitrasforma $H(f)$. Es. RC: $h(t)=\tfrac1T e^{-t/T}u(t)$, $T=RC$, $H(f)=\dfrac{1}{1+j2\pi fT}$.</li>
+<li>Verifica linearità: termini tipo $x^2$, $|x|$, $x{+}b$ (con $b\neq0$) non lineari. Stazionarietà: coefficienti dipendenti da $t$ → non stazionario.</li>
+<li><b>Filtrare una componente a $f_0$</b> (es. 60 Hz dalla rete): usa BS/LP selettivo che preserva la banda utile e taglia $f_0$.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 7 ===== -->
+<section class="topic" id="m7">
+<h3>7 · Campionamento & ricostruzione</h3>
+<p class="src">Fonti: 2026_04_16, 2026_04_21</p>
+
+<div class="box def"><span class="tag">Campionamento</span>
+Campionatore con passo $T$, frequenza $f_c=1/T$. Lo spettro del segnale campionato è la <b>periodicizzazione</b> di $X(f)$ ai multipli di $f_c$ (repliche/alias).</div>
+<div class="box key"><span class="tag">Condizione di Nyquist</span>
+Per un segnale a banda limitata $B$:
+$$\boxed{f_c\ge 2B}\qquad\Rightarrow\ \text{niente aliasing, } X(f)\text{ in banda preservato.}$$
+$f_{c,\min}=2B$ = <b>frequenza di Nyquist</b>. Se $f_c<2B$ → <b>aliasing</b> (spettro irriconoscibile).</div>
+<p><b>Filtro anti-aliasing</b>: limita la banda a $B'$ prima del campionamento (Nyquist diventa $f_c\ge2B'$). Audio: orecchio 20 Hz–20 kHz ⇒ $B=20$ kHz, $f_c\ge40$ kHz; CD 44.1 kHz, DVD 48 kHz.</p>
+
+<h4>Ricostruzione (interpolazione)</h4>
+<div class="box key"><span class="tag">Interpolatore cardinale (Shannon, 1949)</span>
+Se $x(t)$ è a banda $B$ e $f_c\ge2B$, allora:
+$$x(t)=\sum_{n}x[n]\,\operatorname{sinc}\!\Big(\frac{t-nT}{T}\Big)$$
+Ricostruzione <b>esatta</b>. Ma: banda finita ⇒ durata infinita (somma infinita) e sinc <b>non causale</b> ⇒ non realizzabile in tempo reale.</div>
+<ul>
+<li><b>Interpolatore a mantenimento</b> (rect): introduce distorsione in banda (sagoma sinc) + <b>immagini</b> fuori banda → si corregge con filtro analogico <i>anti-immagine</i> in uscita.</li>
+<li>Sinc <b>troncata</b> a $\Delta$: compromesso complessità/accuratezza ($\Delta=2T$ insufficiente; servono $\Delta\sim20$–$200\,T$). Per renderla causale: traslazione → ritardo $\Delta/2$.</li>
+</ul>
+
+<div class="box recipe"><span class="tag">Come si risolve</span>
+<ol>
+<li>Dato $B$, scegli $f_c\ge2B$; se il segnale non è a banda limitata, prima filtra anti-aliasing a $B'$.</li>
+<li>Aliasing: la replica a $f_c$ si sovrappone se $f_c-B<B$, cioè $f_c<2B$. Le frequenze sopra $f_c/2$ "ripiegano".</li>
+<li>Banda del segnale trasmesso dipende anche da: livelli ADC, source/channel encoder, modulatore.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 8 ===== -->
+<section class="topic" id="m8">
+<h3>8 · Teoria dei codici di canale</h3>
+<p class="src">Fonti: 2026_04_24, 2026_05_07, 2026_05_08</p>
+
+<div class="box def"><span class="tag">Sorgente vs canale</span>
+<b>Source encoder</b>: rimuove ridondanza (compressione). <b>Channel encoder</b>: aggiunge ridondanza controllata (protezione). Codici a <b>rivelazione</b> (es. parità, ISBN, checksum) e a <b>correzione</b> (memorie, satellitari).</div>
+
+<h4>Rate e tempi</h4>
+<div class="box key"><span class="tag">Formule chiave</span>
+$$R=\frac{k}{n}\;(<1),\qquad R_b\,T_b=1,\qquad R_c=\frac{R_b}{R},\qquad T_c=R\,T_b$$
+($k$ bit info → $n$ bit codice; il tempo della parola = tempo dei $k$ bit in ingresso: $nT_c=kT_b$).</div>
+<div class="box ex"><span class="tag">Esempio</span>
+$R=4/7$, $R_b=10$ Mbit/s → $T_b=0.1\,\mu$s; $R_c=17.5$ Mbit/s; $T_c\approx57.1$ ns; file 50 Mbit in 5 s.</div>
+
+<h4>Codici semplici</h4>
+<div class="box key"><span class="tag">Ripetizione $R=1/n$ ($n$ dispari)</span>
+Decodifica a maggioranza. <b>Rivela</b> fino a $n-1$ errori, <b>corregge</b> fino a $(n-1)/2$. Prob. di sbagliare $t$ bit su $n$ (binomiale):
+$$P(t)=\binom{n}{t}p^{t}(1-p)^{n-t},\qquad P_{e,\text{cw}}=\sum_{t=\frac{n+1}{2}}^{n}\binom{n}{t}p^{t}(1-p)^{n-t}$$
+($p=p_{e,b}\sim10^{-2}\!\div\!10^{-5}$ = prob. errore sul bit).</div>
+<p><b>Controllo di parità</b> $R=k/(k+1)$: 1 bit = somma mod-2 dei $k$ bit; rivela errori dispari.</p>
+
+<h4>Codici a blocco lineari</h4>
+<div class="box key"><span class="tag">Generatrice & parità</span>
+Parola $\mathbf{c}=\mathbf{b}\,G$, con $G$ ($k\times n$) <b>matrice generatrice</b> (righe $\mathbf g_i$). Proprietà: ogni parola è combinazione lineare delle righe; la somma di due parole è una parola; $\mathbf 0$ è sempre parola.
+<br>Forma <b>sistematica</b>: $G=[\,I_k\mid P\,]$ ($P$ è $k\times(n{-}k)$). <b>Matrice di parità</b> $H=[\,P^{T}\mid I_{n-k}\,]$, con $\mathbf c\,H^{T}=\mathbf 0$.</div>
+<div class="box def"><span class="tag">Distanza di Hamming</span>
+$d_H(\mathbf c_1,\mathbf c_2)$ = n° posizioni diverse; peso $w(\mathbf c)$ = n° di 1. Per codici lineari: <b>distanza minima</b> $d_{\min}=\min_{\mathbf c\neq\mathbf 0} w(\mathbf c)$.</div>
+<div class="box key"><span class="tag">Codici di Hamming</span>
+Parametro $m\ge2$: $n=2^m-1$, $k=n-m$, $d_{\min}=3$. Le colonne di $H$ sono tutte le $2^m-1$ combinazioni non nulle di $m$ bit. ($m=2$ → ripetizione; $m=3$ → $(7,4)$.)</div>
+
+<h4>Rivelazione, correzione, sindrome</h4>
+<div class="box key"><span class="tag">Formule chiave</span>
+Ricevuto $\mathbf y=\mathbf x+\mathbf e$. <b>Sindrome</b> $\mathbf s=\mathbf y\,H^{T}$ ($n-k$ bit).
+<ul style="margin:6px 0">
+<li>$\mathbf s\neq\mathbf 0$ → errore <b>rilevato</b>; un codice rileva fino a $d_{\min}-1$ errori.</li>
+<li><b>Decodifica ML</b> = decodifica a <b>distanza minima</b> (scegli la parola più vicina a $\mathbf y$).</li>
+<li>Correzione fino a $\;t=\big\lfloor\frac{d_{\min}-1}{2}\big\rfloor\;$ errori; $\;d_{\min}=2t+1$.</li>
+<li><b>Decodifica a sindrome</b>: a ogni $\mathbf s$ associa il <i>coset leader</i> (pattern d'errore di peso minimo) e correggi $\hat{\mathbf c}=\mathbf y+\mathbf e_{\text{leader}}$.</li>
+</ul></div>
+<div class="box key"><span class="tag">Prestazioni</span>
+$$P_{\text{word}}=\sum_{i=t+1}^{n}\binom{n}{i}p^{i}(1-p)^{n-i},\qquad P_{\text{bit}}\approx \tfrac{1}{n}\!\!\sum_{i=t+1}^{n} i\binom{n}{i}p^{i}(1-p)^{n-i}$$</div>
+
+<div class="box recipe"><span class="tag">Come si risolve</span>
+<ol>
+<li><b>Costruisci $G,H$</b>: da $G=[I|P]$ ricavi $H=[P^T|I]$. Verifica $\mathbf c H^T=0$.</li>
+<li><b>$d_{\min}$</b>: minimo peso tra le parole non nulle (oppure n° minimo di colonne di $H$ linearmente dipendenti).</li>
+<li><b>$t=\lfloor(d_{\min}-1)/2\rfloor$</b>: capacità di correzione; $d_{\min}-1$: capacità di rivelazione.</li>
+<li><b>Sindrome</b>: calcola $\mathbf s=\mathbf yH^T$; se $\mathbf s\neq0$ trova il coset leader e correggi.</li>
+<li><b>Probabilità</b>: usa la binomiale con $p=p_{e,b}$; per ripetizione somma da $(n{+}1)/2$.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 9 ===== -->
+<section class="topic" id="m9">
+<h3>9 · Trasmissione: M-PAM banda base</h3>
+<p class="src">Fonti: 2026_05_15_slides</p>
+
+<div class="box def"><span class="tag">Modulatore</span>
+<b>Mappatore</b>: associa $\log_2 M$ bit a un simbolo di un alfabeto di cardinalità $M=2^Q$ (PAM antipodale: $\{\pm1,\pm3,\dots,\pm(M-1)\}$). <b>Filtro di trasmissione</b> $g_T(t)$: interpola i simboli generando il segnale analogico.</div>
+<div class="box key"><span class="tag">Tempi e segnale</span>
+$$T_s=T_d\log_2 M,\qquad f_s=\frac{1}{T_s}\ (\text{simboli/s}),\qquad s_T(t)=\sum_i a_i\,g_T(t-iT_s)$$
+$T_d$ = tempo di bit, $T_s$ = intervallo di segnalazione (simbolo). $f_s$ diminuisce all'aumentare di $M$.</div>
+
+<h4>Statistiche dei simboli & DSP</h4>
+<div class="box key"><span class="tag">Formule chiave (M-PAM, simboli i.i.d. equiprobabili)</span>
+$$E\{a_i\}=0\ (\text{mappa simmetrica}),\qquad \sigma_a^2=E\{a_i^2\}=\frac{M^2-1}{3}$$
+$$R_a(m)=\sigma_a^2\,\delta[m]\ (\text{Kronecker}),\qquad S_{s_T}(f)=\frac{E\{a_i^2\}}{T_s}\,|G_T(f)|^2$$</div>
+<div class="box key"><span class="tag">Potenza ed energia</span>
+$$P_s=\int S_{s_T}(f)\,df=\frac{E\{a_i^2\}}{T_s}E_{g_T},\quad E_{g_T}=\int|G_T|^2df$$
+$$E_s=P_s\,T_s\ (\text{energia/simbolo}),\qquad E_b=\frac{E_s}{\log_2 M}\ (\text{energia/bit})$$
+($E_d=$ energia per bit codificato, $E_b=$ non codificato; l'energia si conserva). <b>Banda</b>: dal primo nullo della DSP / dalla TCF del filtro; cresce al diminuire del rate, diminuisce all'aumentare di $M$.</div>
+</section>
+
+<!-- ===== MOD 10 ===== -->
+<section class="topic" id="m10">
+<h3>10 · Sistema PAM completo: ISI, Nyquist, filtro adattato</h3>
+<p class="src">Fonti: 2026_05_19, 2026_05_22</p>
+
+<div class="box def"><span class="tag">Schema TX–canale–RX</span>
+$s_T=\sum_i a_i g_T(t-iT_s)$ → canale $c(t)$ → $s_R=s_T\otimes c=\sum_i a_i g_{TC}(t-iT_s)$, $g_{TC}=g_T\otimes c$. Ricevuto $r=s_R+w$ ($w$ = rumore bianco Gaussiano, $S_w(f)=N_0/2$). Dopo il filtro RX $g_R$:
+$$x(t)=\sum_i a_i\,g(t-iT_s)+m(t),\quad g=g_T\otimes c\otimes g_R,\quad m=w\otimes g_R$$
+con $S_m(f)=\tfrac{N_0}{2}|G_R(f)|^2$, $\sigma_m^2=\tfrac{N_0}{2}E_{g_R}$.</div>
+
+<div class="box key"><span class="tag">ISI (interferenza intersimbolica)</span>
+Campionando a $kT_s$:
+$$x(k)=\underbrace{a_k\,g(0)}_{\text{utile}}+\underbrace{\sum_{m\neq0}a_{k-m}\,g(mT_s)}_{\text{ISI}}+m_k$$</div>
+
+<div class="box key"><span class="tag">Condizioni di Nyquist (ISI nulla)</span>
+<b>Tempo:</b> $\;g(mT_s)=\begin{cases}1 & m=0\\0 & m\neq0\end{cases}=\delta[m]\;$ → $x(k)=a_k+m_k$ (impulso di Nyquist).
+<br><b>Frequenza</b> (somma di Poisson): $\displaystyle\sum_{\ell}G\!\Big(f-\frac{\ell}{T_s}\Big)=T_s$ (somma costante in $f$).
+<br><b>Banda minima di Nyquist:</b> $B=\dfrac{1}{2T_s}$ (necessaria); impulso a banda minima = $g(t)=\operatorname{sinc}(t/T_s)$, $G(f)$ rettangolare.</div>
+
+<div class="box key"><span class="tag">Coseno rialzato (RCR)</span>
+Famiglia con roll-off $\alpha\in[0,1]$: zona piatta fino a $(1-\alpha)/2T_s$, scende a zero a $(1+\alpha)/2T_s$, vale $T_s/2$ in $1/2T_s$.
+$$g_{\text{RCR}}(t)=\frac{\sin(\pi t/T_s)}{\pi t/T_s}\cdot\frac{\cos(\pi\alpha t/T_s)}{1-(2\alpha t/T_s)^2},\qquad B=\frac{1+\alpha}{2T_s}$$
+$\alpha\!\uparrow$: banda maggiore ma lobi temporali minori (meno sensibile a errori di timing). $\alpha\!=\!0$ → sinc (banda minima, ma lobi grandi).</div>
+
+<div class="box key"><span class="tag">Filtro adattato (matched filter)</span>
+Massimizza l'SNR sul campione $x(t_0)$ per impulso $p(t)$ in rumore bianco $N_0/2$ (disug. di Schwartz):
+$$\frac{S_u}{N_u}\le\frac{2E_p}{N_0},\quad\text{uguaglianza per}\quad h(t)=p(t_0-t)\;\Rightarrow\;H(f)=P^*(f)e^{-j2\pi f t_0}$$
+$|H(f)|=|P(f)|$ (amplifica dove l'SNR è alto). Uscita utile $s(t_0)=E_p$.</div>
+
+<div class="box key"><span class="tag">Progetto dei filtri TX/RX</span>
+Si assume canale non distorcente $c(t)=\delta(t)$. Due condizioni:
+<br>a) <b>anti-ISI</b>: $g=g_T\otimes g_R$ di Nyquist → $G(f)=G_T(f)G_R(f)=G_{\text{RCR}}(f)$;
+<br>b) <b>matched</b>: $g_R(t)=g_T(-t)$ → $G_R(f)=G_T^*(f)$.
+$$\boxed{G_T(f)=G_R(f)=\sqrt{G_{\text{RCR}}(f)}}\quad(\text{radice di coseno rialzato, RRCR})$$
+Gli impulsi RRCR non sono singolarmente di Nyquist, ma lo è la loro convoluzione.</div>
+
+<div class="box recipe"><span class="tag">Come si risolve</span>
+<ol>
+<li><b>ISI nulla?</b> verifica $g(mT_s)=\delta[m]$ (tempo) o $\sum_\ell G(f-\ell/T_s)=$ cost (frequenza).</li>
+<li><b>Banda</b> dato $T_s$ e $\alpha$: $B=(1+\alpha)/2T_s$ (banda base); minima per $\alpha=0$: $1/2T_s$.</li>
+<li><b>Filtro adattato</b>: $h(t)=p(t_0-t)$ (ribalta e trasla); SNR max $=2E_p/N_0$; uscita di picco $=E_p$.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 11 ===== -->
+<section class="topic" id="m11">
+<h3>11 · Prestazioni: SER M-PAM & efficienza</h3>
+<p class="src">Fonti: 2026_05_26</p>
+
+<div class="box key"><span class="tag">Modello al decisore</span>
+Segnale ricevuto $s_R=A\sum_i a_i g_T(t-iT_s)$ ($A$ = attenuazione di canale). Con filtri RRCR, $\int|G_T|^2=g_{\text{RCR}}(0)=1$, quindi
+$$E_s=\frac{A^2(M^2-1)}{3}\ \Rightarrow\ A=\sqrt{\frac{3E_s}{M^2-1}}$$
+Dopo scaling $z(k)=x(k)/A=a_k+\eta_k$, con $\sigma_\eta^2=\dfrac{N_0}{2A^2}\!\cdot\!1=\dfrac{M^2-1}{6\,(E_s/N_0)}$. Soglie a metà tra simboli adiacenti.</div>
+
+<div class="box key"><span class="tag">Symbol Error Rate (M-PAM)</span>
+$$\boxed{\;\text{SER}=\frac{2(M-1)}{M}\,Q\!\left(\frac{1}{\sigma_\eta}\right)=\frac{2(M-1)}{M}\,Q\!\left(\sqrt{\frac{6\,(E_s/N_0)}{M^2-1}}\right)\;}$$
+In termini di $E_b/N_0$ (con $E_s=E_b\log_2 M$):
+$$\text{SER}=\frac{2(M-1)}{M}\,Q\!\left(\sqrt{\frac{6\,(E_b/N_0)\log_2 M}{M^2-1}}\right)$$
+<b>PAM binario ($M=2$):</b> $\;\text{SER}=Q\!\big(\sqrt{2E_b/N_0}\big)$.</div>
+
+<div class="box key"><span class="tag">Efficienza spettrale ed energetica</span>
+Bit-rate $R_d=\dfrac{\log_2 M}{T_s}$, banda $B_T=\dfrac{1+\alpha}{2T_s}$:
+$$\eta_{sp}=\frac{R_d}{B_T}=\frac{2\log_2 M}{1+\alpha}\quad[\text{bit/s/Hz}]$$
+$\eta_{sp}\!\uparrow$ con $M$. Ma l'$E_b/N_0$ richiesto per una SER obiettivo cresce con $M$ → efficienza <b>energetica</b> $\downarrow$. <b>Perdita</b> 4-PAM vs 2-PAM: $L=10\log_{10}\frac{5}{2}\approx 4$ dB.</div>
+
+<div class="box recipe"><span class="tag">Come si risolve — SER e perdita</span>
+<ol>
+<li>Calcola $\sigma_\eta^2=\frac{M^2-1}{6(E_s/N_0)}$, poi $\text{SER}=\frac{2(M-1)}{M}Q(1/\sigma_\eta)$.</li>
+<li>Leggi $Q(\cdot)$ dalla tabella (Appendice) o dal grafico fornito a esame.</li>
+<li><b>Perdita energetica</b> tra due $M$: uguaglia gli <i>argomenti</i> delle $Q$ (trascura i coefficienti) e converti il rapporto in dB.</li>
+<li><b>$\eta_{sp}=2\log_2 M/(1+\alpha)$</b>; nota il trade-off spettrale↔energetico al variare di $M$.</li>
+</ol></div>
+</section>
+
+<!-- ===== MOD 12 ===== -->
+<section class="topic" id="m12">
+<h3>12 · Passband PAM & QAM</h3>
+<p class="src">Fonti: 2026_05_27, 2026_05_28</p>
+
+<h4>PAM passa-banda</h4>
+<div class="box key"><span class="tag">Formule chiave</span>
+$$s_{\text{RF}}(t)=s_T(t)\cos(2\pi f_0 t),\qquad S_{\text{RF}}(f)=\tfrac14\big[S_{s_T}(f-f_0)+S_{s_T}(f+f_0)\big]$$
+Potenza $P_{\text{RF}}=P_s/2$, energia/simbolo $E_{s,\text{RF}}=\tfrac{1}{2}P_s T_s$. <b>Banda RF</b> (doppia): $B_{\text{RF}}=\dfrac{1+\alpha}{T_s}$. Efficienza spettrale $\eta_{sp}=\dfrac{\log_2 M}{1+\alpha}$.
+<br><b>Ricevitore:</b> $\times 2\cos(2\pi f_0 t)$ + filtro passa-basso → recupera $s_T(t)+n(t)$ in banda base. <b>SER uguale al PAM banda base.</b></div>
+
+<h4>QAM (Quadrature Amplitude Modulation)</h4>
+<div class="box def"><span class="tag">Definizione</span>
+Costellazione 2D: simbolo complesso $c_i=a_i+jb_i$ (due PAM su portanti in quadratura). <b>Codifica di Gray</b>: simboli adiacenti differiscono di 1 bit. Inviluppo complesso $\tilde s(t)=\sum_i c_i\,g_T(t-iT_s)=s_c(t)+j\,s_s(t)$.</div>
+<div class="box key"><span class="tag">Segnale & ricevitore</span>
+$$s_{\text{RF}}(t)=s_c(t)\cos(2\pi f_0 t)-s_s(t)\sin(2\pi f_0 t)=\Re\{\tilde s(t)e^{j2\pi f_0 t}\}$$
+$s_c=\sum a_i g_T(\cdot)$ (in fase), $s_s=\sum b_i g_T(\cdot)$ (quadratura). Banda $B_{\text{RF}}=\dfrac{1+\alpha}{T_s}$.
+<br><b>Ricevitore</b>: due rami, $\times2\cos$ e $\times(-2\sin)$, filtro adattato, campiona →
+$$X_c(k)=a_k+u_c,\quad X_s(k)=b_k+u_s,\qquad u_c,u_s\sim\mathcal N(0,N_0)$$
+Per M-QAM quadrata: $E\{|c_i|^2\}=\tfrac{2(M-1)}{3}$.</div>
+
+<div class="box key"><span class="tag">Probabilità d'errore</span>
+Decisione indipendente sui due assi (semi-distanza $=1$, $\sigma^2=N_0$): ogni asse sbaglia con $Q(1/\sqrt{N_0})$.
+<ul style="margin:6px 0">
+<li><b>4-QAM:</b> $P(e)=2Q\!\big(\tfrac{1}{\sqrt{N_0}}\big)-Q^2\!\big(\tfrac{1}{\sqrt{N_0}}\big)\approx 2Q\!\big(\tfrac{1}{\sqrt{N_0}}\big)$, ovvero $\approx Q\!\big(\sqrt{E_s/N_0}\big)$.</li>
+<li><b>16-QAM:</b> $P(e)\approx 3Q\!\big(\tfrac{1}{\sqrt{N_0}}\big)\approx 3Q\!\big(\sqrt{\tfrac{1}{5}\,E_s/N_0}\big)$.</li>
+<li><b>M-QAM generale:</b> $\;\text{SER}\approx 4\!\left(1-\tfrac{1}{\sqrt M}\right)Q\!\left(\sqrt{\dfrac{3}{M-1}\,\dfrac{E_s}{N_0}}\right)$.</li>
+</ul>
+<small>(I coefficienti esatti dipendono dalla normalizzazione della costellazione usata a lezione.)</small></div>
+
+<div class="box recipe"><span class="tag">Come si risolve — P(e) QAM</span>
+<ol>
+<li>Disegna le <b>zone di decisione</b> e classifica i simboli: <i>interni</i> (4 vicini), <i>di bordo/lato</i>, <i>d'angolo</i> — hanno P(e) condizionata diversa.</li>
+<li>Probabilità di <b>corretta</b> ricezione = prodotto delle prob. sui due assi ($1-Q$ o $1-2Q$ a seconda della posizione); $P(e\mid c)=1-P(c\mid c)$.</li>
+<li>Media pesata sui simboli (equiprobabili): $P(e)=\frac1M\sum_m \#\text{-simboli}_m\cdot P(e\mid c^{(m)})$; trascura i termini $Q^2$.</li>
+<li>Confronta efficienza spettrale ($\eta_{sp}$) ed energetica ($E_b/N_0$ per SER fissata) con PAM equivalente.</li>
+</ol></div>
+</section>
+
+<!-- ===== APPENDICE Q ===== -->
+<section class="topic" id="mq">
+<h3>Appendice · Funzione Q</h3>
+<p class="src">Fonti: Ricevimento_esercizi (grafico di Q)</p>
+<div class="box def"><span class="tag">Definizione</span>
+$$Q(x)=\frac{1}{\sqrt{2\pi}}\int_{x}^{\infty}e^{-t^2/2}\,dt=\tfrac12\operatorname{erfc}\!\Big(\frac{x}{\sqrt2}\Big),\qquad Q(-x)=1-Q(x),\quad Q(0)=\tfrac12$$
+Coda di una Gaussiana standard $\mathcal N(0,1)$: $\Pr\{N>x\}$. Per $x$ grande: $Q(x)\approx\dfrac{1}{x\sqrt{2\pi}}e^{-x^2/2}$.</div>
+<div class="cols">
+<table class="tbl-narrow">
+<tr><th>$x$</th><th>$Q(x)$</th></tr>
+<tr><td>0.0</td><td>$0.5$</td></tr>
+<tr><td>0.5</td><td>$0.309$</td></tr>
+<tr><td>1.0</td><td>$0.159$</td></tr>
+<tr><td>1.5</td><td>$6.68\cdot10^{-2}$</td></tr>
+<tr><td>2.0</td><td>$2.28\cdot10^{-2}$</td></tr>
+<tr><td>2.5</td><td>$6.21\cdot10^{-3}$</td></tr>
+<tr><td>3.0</td><td>$1.35\cdot10^{-3}$</td></tr>
+</table>
+<table class="tbl-narrow">
+<tr><th>$x$</th><th>$Q(x)$</th></tr>
+<tr><td>3.5</td><td>$2.33\cdot10^{-4}$</td></tr>
+<tr><td>4.0</td><td>$3.17\cdot10^{-5}$</td></tr>
+<tr><td>4.5</td><td>$3.40\cdot10^{-6}$</td></tr>
+<tr><td>5.0</td><td>$2.87\cdot10^{-7}$</td></tr>
+<tr><td>6.0</td><td>$9.9\cdot10^{-10}$</td></tr>
+<tr><td colspan="2" style="background:#f0f3fa"><b>Inverse utili</b></td></tr>
+<tr><td>$Q=10^{-3}$</td><td>$x\approx3.09$</td></tr>
+<tr><td>$Q=10^{-5}$</td><td>$x\approx4.27$</td></tr>
+<tr><td>$Q=10^{-6}$</td><td>$x\approx4.75$</td></tr>
+</table>
+</div>
+</section>
+
+<!-- ===== FORMULARIO ===== -->
+<section class="topic" id="mf">
+<h3>Formulario lampo</h3>
+<p class="src">Le formule più usate negli esercizi, in un colpo d'occhio.</p>
+<table>
+<tr><th>Grandezza</th><th>Formula</th></tr>
+<tr><td>Potenza media periodica</td><td>$P=\frac1{T_0}\int_{T_0}|x|^2dt$; sinusoide $A$: $A^2/2$</td></tr>
+<tr><td>Friis</td><td>$P_r=P_tG_tG_r(\lambda/4\pi d)^2$, $\lambda=c/f$</td></tr>
+<tr><td>Capacità</td><td>$C=B\log_2(1+\text{SNR})$</td></tr>
+<tr><td>rect ↔</td><td>$T\operatorname{sinc}(fT)$; triangolo ↔ $T\operatorname{sinc}^2(fT)$</td></tr>
+<tr><td>Durata convoluzione</td><td>$A+B$</td></tr>
+<tr><td>Nyquist (campionamento)</td><td>$f_c\ge 2B$</td></tr>
+<tr><td>Rate codice / tempi</td><td>$R=k/n$, $T_c=R\,T_b$, $R_c=R_b/R$</td></tr>
+<tr><td>Ripetizione: correzione</td><td>$(n-1)/2$ errori; $P_{e}=\sum_{t\ge(n+1)/2}\binom nt p^t(1-p)^{n-t}$</td></tr>
+<tr><td>Codice lineare</td><td>$\mathbf c=\mathbf bG$, $G=[I|P]$, $H=[P^T|I]$, $\mathbf s=\mathbf yH^T$</td></tr>
+<tr><td>Correzione</td><td>$t=\lfloor(d_{\min}-1)/2\rfloor$, $d_{\min}=2t+1$; Hamming $d_{\min}=3$</td></tr>
+<tr><td>M-PAM: $E\{a^2\}$</td><td>$(M^2-1)/3$</td></tr>
+<tr><td>Banda RCR (base)</td><td>$B=(1+\alpha)/2T_s$; minima $1/2T_s$</td></tr>
+<tr><td>Matched filter</td><td>$h(t)=p(t_0-t)$, $\text{SNR}_{\max}=2E_p/N_0$</td></tr>
+<tr><td>SER M-PAM</td><td>$\frac{2(M-1)}{M}Q\!\big(\sqrt{6(E_s/N_0)/(M^2-1)}\big)$</td></tr>
+<tr><td>SER 2-PAM</td><td>$Q(\sqrt{2E_b/N_0})$</td></tr>
+<tr><td>Efficienza spettrale PAM</td><td>$\eta_{sp}=2\log_2 M/(1+\alpha)$</td></tr>
+<tr><td>Banda RF (passband/QAM)</td><td>$B_{\text{RF}}=(1+\alpha)/T_s$</td></tr>
+<tr><td>SER QAM (M)</td><td>$4(1-1/\sqrt M)Q\!\big(\sqrt{3E_s/((M-1)N_0)}\big)$</td></tr>
+</table>
+</section>
+
+</main>
+
+<button id="toTop" title="Torna su">↑</button>
+
+<script>
+// ---- mobile menu ----
+const sidebar=document.getElementById('sidebar');
+document.getElementById('menuBtn').addEventListener('click',()=>sidebar.classList.toggle('open'));
+document.querySelectorAll('#nav a[href]').forEach(a=>a.addEventListener('click',()=>{if(window.innerWidth<=900)sidebar.classList.remove('open');}));
+
+// ---- back to top ----
+const toTop=document.getElementById('toTop');
+window.addEventListener('scroll',()=>{toTop.style.display=window.scrollY>500?'block':'none';});
+toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// ---- scroll-spy (highlight active nav) ----
+const sections=[...document.querySelectorAll('section.topic')];
+const navLinks=[...document.querySelectorAll('#nav a[href^="#"]')];
+const linkFor=id=>navLinks.find(a=>a.getAttribute('href')==='#'+id);
+const spy=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      navLinks.forEach(a=>a.classList.remove('active'));
+      const l=linkFor(e.target.id); if(l)l.classList.add('active');
+    }
+  });
+},{rootMargin:'-45% 0px -50% 0px'});
+sections.forEach(s=>spy.observe(s));
+
+// ---- search / filter ----
+const search=document.getElementById('search');
+const info=document.getElementById('searchInfo');
+search.addEventListener('input',()=>{
+  const q=search.value.trim().toLowerCase();
+  let shown=0;
+  sections.forEach(sec=>{
+    const match = q==='' || sec.textContent.toLowerCase().includes(q);
+    sec.classList.toggle('hidden',!match);
+    const l=linkFor(sec.id);
+    if(l) l.classList.toggle('hidden',!match);
+    if(match) shown++;
+  });
+  // hide module headers whose following links are all hidden
+  document.querySelectorAll('#nav a.modhead').forEach(h=>{
+    let n=h.nextElementSibling, anyVisible=false;
+    while(n && !n.classList.contains('modhead')){
+      if(n.matches('a[href]') && !n.classList.contains('hidden')) anyVisible=true;
+      n=n.nextElementSibling;
+    }
+    h.classList.toggle('hidden',!anyVisible);
+  });
+  info.textContent = q==='' ? '' : (shown+' sezione'+(shown===1?'':'i')+' trovate');
+});
+</script>
+</body>
+</html>
