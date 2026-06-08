@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esercitazione d'esame — Laboratorio di Sistemi Operativi</title>
+<style>
+:root{
+  --bg:#0f1419; --bg2:#171d26; --bg3:#1e2630; --panel:#141a22;
+  --fg:#d7dee8; --fg-dim:#94a3b3; --muted:#6b7886;
+  --accent:#4fb6ff; --accent2:#7ee787; --warn:#ffb454; --danger:#ff7b72;
+  --border:#27313d; --code-bg:#10151c; --row:#161d27; --row2:#131922;
+  --ok:#2ea043; --no:#da3633;
+  --kw:#ff7b9c; --ty:#7ee0ff; --fn:#d2a8ff; --str:#9ece6a; --num:#ffb454; --com:#5c6b7a; --pre:#79c0ff;
+}
+[data-theme="light"]{
+  --bg:#f6f8fa; --bg2:#ffffff; --bg3:#eef1f5; --panel:#ffffff;
+  --fg:#1c2733; --fg-dim:#475569; --muted:#7a8694;
+  --accent:#0969da; --accent2:#1a7f37; --warn:#bc4c00; --danger:#cf222e;
+  --border:#d8dee4; --code-bg:#f4f6f9; --row:#fbfcfd; --row2:#f1f4f7;
+  --ok:#1a7f37; --no:#cf222e;
+  --kw:#cf222e; --ty:#0550ae; --fn:#8250df; --str:#0a7d27; --num:#bc4c00; --com:#8a949e; --pre:#0550ae;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);
+  font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.layout{display:flex;align-items:flex-start}
+aside{position:sticky;top:0;height:100vh;width:260px;flex:0 0 260px;
+  background:var(--panel);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden}
+.brand{padding:16px 16px 12px;border-bottom:1px solid var(--border)}
+.brand h1{font-size:15px;margin:0 0 2px;letter-spacing:.2px}
+.brand small{color:var(--muted);font-size:11.5px}
+nav{overflow:auto;padding:10px 8px;flex:1}
+nav a{display:flex;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;
+  color:var(--fg-dim);font-size:13.5px;cursor:pointer}
+nav a:hover{background:var(--bg3);text-decoration:none;color:var(--fg)}
+nav a.active{background:var(--bg3);color:var(--accent);font-weight:600}
+nav a .ic{font-size:15px}
+.toolbar{padding:10px 12px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.btn{cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--fg);
+  border-radius:8px;padding:8px 10px;font-size:12.5px;text-align:center}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#04121f;border-color:var(--accent);font-weight:700}
+.btn.primary:hover{filter:brightness(1.08);color:#04121f}
+.back{display:block;text-align:center;font-size:12.5px;color:var(--fg-dim)}
+
+main{flex:1;min-width:0;max-width:1000px;margin:0 auto;padding:26px 38px 80px}
+.panel{display:none;animation:fade .2s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h2.title{font-size:22px;margin:0 0 4px}
+.sub{color:var(--fg-dim);margin:0 0 20px;font-size:14px}
+h3{font-size:14px;margin:20px 0 8px;color:var(--accent2);text-transform:uppercase;letter-spacing:.3px}
+
+code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px;background:var(--code-bg);border:1px solid var(--border);padding:1px 5px;border-radius:5px;color:var(--pre)}
+pre{margin:8px 0;background:var(--code-bg);border:1px solid var(--border);border-radius:9px;padding:12px 14px;overflow:auto}
+pre code{background:none;border:none;padding:0;color:var(--fg);font-size:12.5px;line-height:1.5;white-space:pre}
+.tok-kw{color:var(--kw)}.tok-ty{color:var(--ty)}.tok-fn{color:var(--fn)}
+.tok-str{color:var(--str)}.tok-num{color:var(--num)}.tok-com{color:var(--com);font-style:italic}.tok-pre{color:var(--str)}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:14px 0}
+.card.exq{border-left:3px solid var(--accent)}
+.tag{display:inline-block;font-size:11px;font-weight:700;color:var(--accent);background:var(--bg3);
+  border:1px solid var(--border);border-radius:20px;padding:2px 10px;margin-bottom:8px}
+.tag.pts{color:var(--warn)}
+
+.note,.tip,.warn{border-left:3px solid var(--accent);background:var(--bg3);padding:9px 13px;border-radius:0 8px 8px 0;margin:10px 0;font-size:13.5px}
+.tip{border-color:var(--accent2)}.warn{border-color:var(--warn)}
+.muted{color:var(--muted)}
+
+/* overview grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:14px}
+.modecard{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:.15s}
+.modecard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.modecard .ic{font-size:26px}
+.modecard h4{margin:8px 0 4px;font-size:15px}
+.modecard p{margin:0;font-size:12.5px;color:var(--fg-dim)}
+.exam-format{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.exam-format th,.exam-format td{border:1px solid var(--border);padding:7px 10px;text-align:left}
+.exam-format thead th{background:var(--bg3);font-size:11.5px;text-transform:uppercase}
+
+/* quiz */
+.qprogress{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--fg-dim);margin-bottom:10px}
+.qprogress b{color:var(--fg)}
+.qtext{font-size:16px;margin:6px 0 14px;font-weight:600}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{text-align:left;padding:11px 14px;border:1px solid var(--border);background:var(--bg3);color:var(--fg);
+  border-radius:9px;cursor:pointer;font-size:14px}
+.opt:hover{border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,transparent)}
+.opt.wrong{border-color:var(--no);background:color-mix(in srgb,var(--no) 18%,transparent)}
+.feedback{margin-top:14px;font-size:13.5px;display:none}
+.feedback.show{display:block}
+.feedback .verdict.ok{color:var(--ok);font-weight:700}
+.feedback .verdict.no{color:var(--no);font-weight:700}
+.scorebar{margin-top:8px;height:8px;border-radius:4px;background:var(--bg3);overflow:hidden}
+.scorebar i{display:block;height:100%;background:var(--accent2);width:0;transition:width .3s}
+.rowbtns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* fields */
+label.fld{display:block;font-size:12.5px;color:var(--fg-dim);margin:10px 0 4px}
+input[type=text],input[type=number],select,textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);color:var(--fg);
+  border-radius:8px;padding:9px 11px;font-size:14px;outline:none;font-family:inherit}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.5;min-height:150px;resize:vertical;white-space:pre}
+.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.inline>div{flex:1;min-width:140px}
+
+/* chmod result */
+.permout{font-family:"JetBrains Mono",monospace;font-size:30px;letter-spacing:3px;margin:6px 0;color:var(--accent)}
+.permout .sp{color:var(--warn)}
+.ptable{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+.ptable th,.ptable td{border:1px solid var(--border);padding:6px 9px;text-align:center}
+.ptable thead th{background:var(--bg3);font-size:11px;text-transform:uppercase}
+.ptable td.cls{text-align:left;font-weight:600}
+.challenge-res{font-weight:700;margin-top:10px}
+
+/* checklist */
+.checklist{list-style:none;padding:0;margin:10px 0}
+.checklist li{margin:6px 0}
+.checklist label{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;cursor:pointer}
+.checklist input{width:auto;margin-top:3px}
+.reveal{display:none;margin-top:10px}
+.reveal.show{display:block}
+
+/* timer + exam */
+.examhead{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin:14px 0;position:sticky;top:8px;z-index:5}
+.timer{font-family:"JetBrains Mono",monospace;font-size:30px;font-weight:700}
+.timer.run{color:var(--accent2)}.timer.low{color:var(--danger)}
+.pts-in{width:64px!important;display:inline-block;text-align:center}
+.totbox{font-size:20px;font-weight:800}
+.totbox b{color:var(--accent)}
+.small{font-size:12px;color:var(--muted)}
+
+.hamb{display:none;position:fixed;top:12px;left:12px;z-index:30;background:var(--panel);border:1px solid var(--border);color:var(--fg);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:16px}
+@media(max-width:900px){
+  .hamb{display:block}
+  aside{position:fixed;left:0;top:0;z-index:20;transform:translateX(-100%);transition:transform .2s;box-shadow:0 0 40px rgba(0,0,0,.5)}
+  body.menu-open aside{transform:translateX(0)}
+  main{padding:60px 16px 60px}
+}
+</style>
+</head>
+<body>
+<button class="hamb" id="hamb" aria-label="Menu">☰</button>
+<div class="layout">
+<aside id="aside">
+  <div class="brand">
+    <h1>🎯 Esercitazione d'esame</h1>
+    <small>Lab. Sistemi Operativi · UniPi</small>
+  </div>
+  <nav id="nav">
+    <a data-mode="home" class="active"><span class="ic">🏠</span> Panoramica</a>
+    <a data-mode="quiz"><span class="ic">❓</span> Quiz teoria</a>
+    <a data-mode="chmod"><span class="ic">🔐</span> Simulatore chmod</a>
+    <a data-mode="fork"><span class="ic">🍴</span> Predici l'output (fork)</a>
+    <a data-mode="code"><span class="ic">⌨️</span> Completa il codice</a>
+    <a data-mode="exam"><span class="ic">📝</span> Simulazione esame</a>
+  </nav>
+  <div class="toolbar">
+    <button class="btn" id="theme">☾ / ☀ Tema</button>
+    <a class="back" href="laboratorio_sistemiOperativi.html">← Torna al riassunto</a>
+  </div>
+</aside>
+
+<main id="main">
+
+<!-- ============ HOME ============ -->
+<section class="panel active" data-panel="home">
+  <h2 class="title">Esercitazione d'esame</h2>
+  <p class="sub">Allenati sui 4 tipi di esercizio delle tracce d'esame, oppure prova una simulazione completa a tempo.</p>
+  <table class="exam-format"><thead><tr><th>Es.</th><th>Punti</th><th>Tipo</th><th>Allenati con</th></tr></thead><tbody>
+    <tr><td>1</td><td>4</td><td>Teoria su comando/funzione</td><td>Quiz teoria</td></tr>
+    <tr><td>2</td><td>8</td><td><code>chmod</code> ottale/simbolico</td><td>Simulatore chmod</td></tr>
+    <tr><td>3</td><td>6</td><td>Spiegare codice / primitiva</td><td>Predici l'output (fork)</td></tr>
+    <tr><td>4</td><td>12</td><td>Completare codice con thread</td><td>Completa il codice</td></tr>
+  </tbody></table>
+  <p class="muted" style="font-size:13px">Totale esame = <b>30 punti</b>. Tema condiviso con la pagina di riassunto.</p>
+  <div class="grid">
+    <div class="modecard" data-go="quiz"><div class="ic">❓</div><h4>Quiz teoria</h4><p>Domande a risposta multipla auto-valutate con spiegazione.</p></div>
+    <div class="modecard" data-go="chmod"><div class="ic">🔐</div><h4>Simulatore chmod</h4><p>Digita un comando e vedi i permessi risultanti. + sfida.</p></div>
+    <div class="modecard" data-go="fork"><div class="ic">🍴</div><h4>Predici l'output</h4><p>Quanti processi? Cosa stampa? Traccia passo-passo.</p></div>
+    <div class="modecard" data-go="code"><div class="ic">⌨️</div><h4>Completa il codice</h4><p>deposit/withdraw, 5 filosofi, produttore/consumatore.</p></div>
+    <div class="modecard" data-go="exam"><div class="ic">📝</div><h4>Simulazione esame</h4><p>1 esercizio per tipo, timer e autovalutazione su 30.</p></div>
+  </div>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="panel" data-panel="quiz">
+  <h2 class="title">Quiz di teoria</h2>
+  <p class="sub">Risposta multipla con feedback immediato. Copre gli esercizi tipo 1 (4 punti).</p>
+  <div class="card" id="quizCard">
+    <div class="qprogress"><span>Domanda <b id="qNum">1</b> / <b id="qTot">0</b></span><span>Punteggio: <b id="qScore">0</b></span></div>
+    <div class="scorebar"><i id="qBar"></i></div>
+    <p class="qtext" id="qText">…</p>
+    <div class="opts" id="qOpts"></div>
+    <div class="feedback" id="qFeedback"></div>
+    <div class="rowbtns">
+      <button class="btn primary" id="qNext" style="display:none">Prossima →</button>
+      <button class="btn" id="qRestart">↻ Ricomincia (mescola)</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHMOD ============ -->
+<section class="panel" data-panel="chmod">
+  <h2 class="title">Simulatore <code>chmod</code></h2>
+  <p class="sub">Inserisci i permessi di partenza e uno o più comandi <code>chmod</code> (ottale o simbolico): vedrai il risultato come in <code>ls -l</code>. Copre gli esercizi tipo 2 (8 punti).</p>
+
+  <div class="card">
+    <div class="inline">
+      <div>
+        <label class="fld">Permessi di partenza (ottale, es. 644 o 0000)</label>
+        <input type="text" id="cmBase" value="0000" autocomplete="off">
+      </div>
+    </div>
+    <label class="fld">Comandi <code>chmod</code> (uno per riga, applicati in sequenza)</label>
+    <textarea id="cmCmds" style="min-height:90px">chmod 6757 fileName</textarea>
+    <div class="rowbtns">
+      <button class="btn primary" id="cmRun">▶ Applica</button>
+      <button class="btn" id="cmEx1">Esempio: 567</button>
+      <button class="btn" id="cmEx2">Esempio: ugo=rwx ; g-x</button>
+    </div>
+    <div id="cmOut"></div>
+  </div>
+
+  <h3>Modalità sfida</h3>
+  <div class="card">
+    <p style="margin-top:0">Dato il comando, scrivi la stringa dei permessi risultante (10 caratteri, es. <code>-rwxr-xr-x</code>). Si parte sempre da <code>0000</code>.</p>
+    <p>Comando: <code id="chChallenge">chmod 755 file</code></p>
+    <div class="inline">
+      <div><input type="text" id="chAns" placeholder="-rwxr-xr-x" autocomplete="off" maxlength="10"></div>
+      <button class="btn primary" id="chCheck">Verifica</button>
+      <button class="btn" id="chNew">Nuova sfida</button>
+    </div>
+    <div class="challenge-res" id="chRes"></div>
+  </div>
+</section>
+
+<!-- ============ FORK ============ -->
+<section class="panel" data-panel="fork">
+  <h2 class="title">Predici l'output — <code>fork()</code></h2>
+  <p class="sub">Leggi il codice e rispondi, poi rivela la traccia passo-passo. Copre gli esercizi tipo 3 (6 punti).</p>
+  <div class="rowbtns" id="forkNav"></div>
+  <div id="forkHost"></div>
+</section>
+
+<!-- ============ CODE ============ -->
+<section class="panel" data-panel="code">
+  <h2 class="title">Completa il codice</h2>
+  <p class="sub">Esercizi di sincronizzazione con thread. Scrivi nell'area, poi confronta con la soluzione e spunta i requisiti. Copre gli esercizi tipo 4 (12 punti).</p>
+  <div class="warn"><b>Nota:</b> la pagina non compila il codice — la verifica è data dalla <b>soluzione commentata</b> e dalla <b>checklist</b> di requisiti.</div>
+  <div class="rowbtns" id="codeNav"></div>
+  <div id="codeHost"></div>
+</section>
+
+<!-- ============ EXAM ============ -->
+<section class="panel" data-panel="exam">
+  <h2 class="title">Simulazione d'esame</h2>
+  <p class="sub">Un esercizio per tipo (4 + 8 + 6 + 12 = 30 punti), con timer e autovalutazione finale.</p>
+  <div class="examhead">
+    <div>
+      <div class="timer run" id="exTimer">60:00</div>
+      <div class="small">tempo rimanente</div>
+    </div>
+    <div class="rowbtns" style="margin:0">
+      <button class="btn" id="exStart">▶ Avvia</button>
+      <button class="btn" id="exPause">⏸ Pausa</button>
+      <button class="btn" id="exNewExam">🎲 Nuovo esame</button>
+    </div>
+    <div class="totbox">Totale: <b id="exTotal">0</b> / 30</div>
+  </div>
+  <div id="exHost"></div>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+"use strict";
+var doc=document;
+
+/* ===================== syntax highlight (C) ===================== */
+var KW=/^(return|if|else|while|for|do|switch|case|break|continue|goto|sizeof|typedef|struct|union|enum)$/;
+var TY=/^(void|int|char|unsigned|signed|long|short|float|double|const|static|pid_t|size_t|ssize_t|uid_t|gid_t|pthread_t|pthread_mutex_t|pthread_cond_t|pthread_attr_t|sighandler_t|FILE)$/;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+var RX=/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(#\s*[a-zA-Z]+)|([A-Za-z_][A-Za-z0-9_]*)|(\b\d+\b)/g;
+function hl(code){
+  var out='',last=0,m; RX.lastIndex=0;
+  while((m=RX.exec(code))){
+    out+=esc(code.slice(last,m.index)); last=RX.lastIndex;
+    if(m[1])out+='<span class="tok-com">'+esc(m[1])+'</span>';
+    else if(m[2])out+='<span class="tok-str">'+esc(m[2])+'</span>';
+    else if(m[3])out+='<span class="tok-pre">'+esc(m[3])+'</span>';
+    else if(m[4]){var w=m[4],cls='';if(KW.test(w))cls='tok-kw';else if(TY.test(w))cls='tok-ty';
+      else if(/^\s*\(/.test(code.slice(RX.lastIndex)))cls='tok-fn';
+      out+=cls?'<span class="'+cls+'">'+esc(w)+'</span>':esc(w);}
+    else if(m[5])out+='<span class="tok-num">'+esc(m[5])+'</span>';
+  }
+  out+=esc(code.slice(last)); return out;
+}
+function codeBlock(src){var p=doc.createElement('pre');var c=doc.createElement('code');c.innerHTML=hl(src);p.appendChild(c);return p;}
+
+/* ===================== theme ===================== */
+var html=doc.documentElement;
+try{var sv=localStorage.getItem('so-theme'); if(sv)html.setAttribute('data-theme',sv);}catch(e){}
+doc.getElementById('theme').addEventListener('click',function(){
+  var t=html.getAttribute('data-theme')==='dark'?'light':'dark';
+  html.setAttribute('data-theme',t); try{localStorage.setItem('so-theme',t);}catch(e){}
+});
+
+/* ===================== mode switching ===================== */
+var navLinks=[].slice.call(doc.querySelectorAll('#nav a'));
+var panels=[].slice.call(doc.querySelectorAll('.panel'));
+function showMode(mode){
+  navLinks.forEach(function(a){a.classList.toggle('active',a.dataset.mode===mode);});
+  panels.forEach(function(p){p.classList.toggle('active',p.dataset.panel===mode);});
+  doc.body.classList.remove('menu-open');
+  window.scrollTo(0,0);
+}
+navLinks.forEach(function(a){a.addEventListener('click',function(){showMode(a.dataset.mode);});});
+[].slice.call(doc.querySelectorAll('.modecard')).forEach(function(c){c.addEventListener('click',function(){showMode(c.dataset.go);});});
+doc.getElementById('hamb').addEventListener('click',function(){doc.body.classList.toggle('menu-open');});
+
+/* ===================== QUIZ ===================== */
+var QUIZ=[
+ {q:"Cosa ritorna <code>fork()</code> al processo figlio?",o:["Il PID del figlio","0","Il PID del padre","-1"],c:1,
+  e:"Al figlio ritorna <b>0</b>; al padre ritorna il PID del figlio (&gt;0); &lt;0 indica errore."},
+ {q:"Il comando <code>passwd</code> riesce a scrivere in <code>/etc/shadow</code> perché…",o:["è eseguito sempre da root","ha il bit SUID ed è di proprietà di root","ha permessi 777","usa sudo internamente"],c:1,
+  e:"<code>/usr/bin/passwd</code> ha il <b>SUID</b> ed è di root: durante l'esecuzione l'<b>EUID</b> diventa root, così può scrivere su <code>/etc/shadow</code>."},
+ {q:"Un processo <b>zombie</b> è un processo che…",o:["è in attesa di una risorsa","ha terminato ma il padre non ha ancora fatto wait()","è stato adottato da init","è bloccato su una read"],c:1,
+  e:"Lo zombie è <b>terminato</b> ma la sua entry resta finché il padre non legge lo stato con <code>wait()</code>."},
+ {q:"Cosa succede a un processo <b>orfano</b> (il cui padre è morto)?",o:["Diventa zombie","Viene terminato dal kernel","Viene adottato da init/systemd (PID 1)","Va in stato swapped"],c:2,
+  e:"Gli orfani sono <b>adottati da init</b> (PID 1), che farà il <code>wait()</code> al loro termine."},
+ {q:"In una pipe creata con <code>pipe(fd)</code>, quale descrittore si usa per <b>leggere</b>?",o:["fd[0]","fd[1]","fd[2]","entrambi"],c:0,
+  e:"<code>fd[0]</code> = lettura, <code>fd[1]</code> = scrittura. La pipe è monodirezionale."},
+ {q:"La funzione <code>dup2(target, newfd)</code>…",o:["scambia due descrittori","chiude newfd e lo rende una copia di target","duplica un processo","crea una nuova pipe"],c:1,
+  e:"<code>dup2</code> chiude <code>newfd</code> (se aperto) e ne fa una copia di <code>target</code>: serve per redirigere stdin/stdout."},
+ {q:"Differenza principale fra <code>find</code> e <code>locate</code>?",o:["find è più veloce","locate cerca in tempo reale nel filesystem","find percorre il filesystem ora, locate consulta un database (updatedb)","sono identici"],c:2,
+  e:"<code>find</code> attraversa il filesystem al momento; <code>locate</code> interroga un <b>database</b> precostruito (<code>updatedb</code>): più veloce ma può essere non aggiornato."},
+ {q:"Cosa fa <code>find ~ -type f -name \"*db*\" -size +1G -delete</code>?",o:["Elenca i file &gt;1GB","Cancella i file regolari con 'db' nel nome e &gt;1GB nella home","Cancella tutte le directory","Crea un archivio"],c:1,
+  e:"Cerca nella home i <b>file regolari</b> con 'db' nel nome e dimensione <b>maggiore di 1GB</b> e li <b>cancella</b> (<code>-delete</code>)."},
+ {q:"Cosa accade ai job in esecuzione quando il terminale viene chiuso?",o:["Continuano normalmente","Ricevono SIGHUP e di norma terminano","Diventano zombie","Vengono messi in background"],c:1,
+  e:"Alla chiusura del terminale i job ricevono <b>SIGHUP</b> e tipicamente terminano. <code>nohup</code>/<code>disown</code> li rendono immuni."},
+ {q:"Differenza fra <code>nohup</code> e <code>disown</code>?",o:["nohup si usa prima di lanciare il comando, disown su un job già attivo","sono identici","disown invia SIGKILL","nohup mette in pausa il job"],c:0,
+  e:"<code>nohup cmd</code> avvia un comando immune a SIGHUP (output su <code>nohup.out</code>); <code>disown %job</code> agisce su un job <b>già in esecuzione</b> rimuovendolo dalla tabella dei job."},
+ {q:"Perché nelle condition variable si usa <code>while</code> e non <code>if</code> attorno alla <code>cond_wait</code>?",o:["Per efficienza","Perché la signal è 'signal &amp; continue': al risveglio la condizione va ri-verificata","Per evitare la compilazione","Non importa, sono equivalenti"],c:1,
+  e:"La <code>signal</code> POSIX è <b>signal &amp; continue</b>: il thread risvegliato non riacquisisce il lock atomicamente, quindi la condizione potrebbe non valere più e va <b>ricontrollata</b>."},
+ {q:"Quali segnali NON possono essere intercettati né ignorati?",o:["SIGINT e SIGTERM","SIGKILL e SIGSTOP","SIGUSR1 e SIGUSR2","SIGCHLD e SIGCONT"],c:1,
+  e:"<b>SIGKILL (9)</b> e <b>SIGSTOP (19)</b> non sono né ignorabili né gestibili con un handler."},
+ {q:"Se il <code>main</code> termina con <code>pthread_exit(NULL)</code> invece che con <code>return</code>…",o:["i thread figli vengono uccisi","i thread figli continuano a girare","il processo va in deadlock","non cambia nulla"],c:1,
+  e:"Con <code>pthread_exit</code> nel main i thread figli <b>continuano</b>; se il main termina normalmente (return/fine) i figli vengono terminati."},
+ {q:"Nella rappresentazione ottale di <code>chmod</code>, quanto vale il permesso di <b>scrittura</b>?",o:["1","2","4","7"],c:1,
+  e:"<code>r=4</code>, <code>w=2</code>, <code>x=1</code>. Quindi la scrittura vale <b>2</b>."},
+ {q:"La famiglia <code>exec*</code> dopo aver avuto successo…",o:["ritorna il PID","non ritorna (sostituisce codice e dati del processo)","crea un nuovo processo","ritorna 0"],c:1,
+  e:"<code>exec</code> <b>sostituisce</b> l'immagine del processo: se ha successo <b>non ritorna</b>; ritorna solo in caso di errore."},
+ {q:"Differenza fra hard link e soft (symbolic) link?",o:["L'hard link è un nome alternativo per lo stesso i-node; il soft link punta a un nome","Sono identici","L'hard link funziona solo fra dischi diversi","Il soft link raddoppia i dati"],c:0,
+  e:"L'<b>hard link</b> condivide lo stesso i-node; il <b>soft link</b> riferisce un percorso/nome e si rompe se l'hard link sparisce."},
+ {q:"L'intervallo dei valori di <b>nice</b> (priorità) è:",o:["0..100","-20..19","1..10","-128..127"],c:1,
+  e:"<b>[-20, 19]</b>: valore basso = priorità alta. Solo root può abbassarlo; l'utente può solo aumentarlo."},
+ {q:"<code>chmod 6757 fileName</code>: cosa attivano le cifre <b>6</b> iniziali?",o:["Sticky bit","SUID + SGID","Solo SUID","Lettura per tutti"],c:1,
+  e:"La cifra speciale 6 = 4+2 = <b>SUID + SGID</b>. Risultato: <code>-rwsr-srwx</code>."}
+];
+var quizOrder=[],qi=0,qScore=0,qAnswered=false;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function quizStart(){quizOrder=shuffle(QUIZ.map(function(_,i){return i;}));qi=0;qScore=0;doc.getElementById('qTot').textContent=quizOrder.length;renderQ();}
+function renderQ(){
+  qAnswered=false;
+  var item=QUIZ[quizOrder[qi]];
+  doc.getElementById('qNum').textContent=qi+1;
+  doc.getElementById('qScore').textContent=qScore;
+  doc.getElementById('qBar').style.width=(qi/quizOrder.length*100)+'%';
+  doc.getElementById('qText').innerHTML=item.q;
+  var opts=doc.getElementById('qOpts');opts.innerHTML='';
+  item.o.forEach(function(text,idx){
+    var b=doc.createElement('button');b.className='opt';b.innerHTML=text;
+    b.addEventListener('click',function(){answerQ(idx,b);});
+    opts.appendChild(b);
+  });
+  var fb=doc.getElementById('qFeedback');fb.className='feedback';fb.innerHTML='';
+  doc.getElementById('qNext').style.display='none';
+}
+function answerQ(idx,btn){
+  if(qAnswered)return; qAnswered=true;
+  var item=QUIZ[quizOrder[qi]];
+  var btns=doc.getElementById('qOpts').children;
+  for(var k=0;k<btns.length;k++){btns[k].disabled=true;if(k===item.c)btns[k].classList.add('correct');}
+  var fb=doc.getElementById('qFeedback');fb.classList.add('show');
+  if(idx===item.c){qScore++;fb.innerHTML='<span class="verdict ok">✓ Esatto!</span> '+item.e;}
+  else{btn.classList.add('wrong');fb.innerHTML='<span class="verdict no">✗ Sbagliato.</span> '+item.e;}
+  doc.getElementById('qScore').textContent=qScore;
+  var nx=doc.getElementById('qNext');nx.style.display='inline-block';
+  nx.textContent=(qi+1<quizOrder.length)?'Prossima →':'Vedi risultato';
+}
+doc.getElementById('qNext').addEventListener('click',function(){
+  if(qi+1<quizOrder.length){qi++;renderQ();}
+  else{
+    doc.getElementById('qBar').style.width='100%';
+    var c=doc.getElementById('quizCard');
+    var pct=Math.round(qScore/quizOrder.length*100);
+    c.innerHTML='<h3 style="margin-top:0">Risultato</h3><p class="qtext">Hai totalizzato <b>'+qScore+'</b> / '+quizOrder.length+' ('+pct+'%).</p>'+
+      '<p>'+(pct>=80?'Ottimo! 🎉':pct>=60?'Bene, ma ripassa gli errori.':'Conviene ripassare la teoria nel riassunto.')+'</p>'+
+      '<div class="rowbtns"><button class="btn primary" id="qAgain">↻ Rifai il quiz</button></div>';
+    doc.getElementById('qAgain').addEventListener('click',function(){location.reload();});
+  }
+});
+doc.getElementById('qRestart').addEventListener('click',quizStart);
+
+/* ===================== CHMOD engine ===================== */
+function blankPerm(){return{u:{r:false,w:false,x:false},g:{r:false,w:false,x:false},o:{r:false,w:false,x:false},suid:false,sgid:false,sticky:false};}
+function setClass(c,n){c.r=!!(n&4);c.w=!!(n&2);c.x=!!(n&1);}
+function applyOctal(p,d){
+  if(d.length===3)d='0'+d;
+  if(d.length!==4||!/^[0-7]{4}$/.test(d))throw "Ottale non valido: "+d;
+  var sp=+d[0];p.suid=!!(sp&4);p.sgid=!!(sp&2);p.sticky=!!(sp&1);
+  setClass(p.u,+d[1]);setClass(p.g,+d[2]);setClass(p.o,+d[3]);
+}
+function applySymbolic(p,clause){
+  var m=clause.match(/^([ugoa]*)([+\-=])([rwxXst]*)$/);
+  if(!m)throw "Sintassi simbolica non valida: "+clause;
+  var who=m[1]||'a',op=m[2],pr=m[3];
+  var cls=[];
+  if(who.indexOf('a')>-1)cls=['u','g','o'];
+  else{if(who.indexOf('u')>-1)cls.push('u');if(who.indexOf('g')>-1)cls.push('g');if(who.indexOf('o')>-1)cls.push('o');}
+  var hR=pr.indexOf('r')>-1,hW=pr.indexOf('w')>-1,hX=pr.indexOf('x')>-1||pr.indexOf('X')>-1,hS=pr.indexOf('s')>-1,hT=pr.indexOf('t')>-1;
+  cls.forEach(function(k){
+    var c=p[k];
+    if(op==='='){c.r=hR;c.w=hW;c.x=hX;}
+    else if(op==='+'){if(hR)c.r=true;if(hW)c.w=true;if(hX)c.x=true;}
+    else{if(hR)c.r=false;if(hW)c.w=false;if(hX)c.x=false;}
+    if(k==='u'){if(op==='=')p.suid=hS;else if(hS)p.suid=(op==='+');}
+    if(k==='g'){if(op==='=')p.sgid=hS;else if(hS)p.sgid=(op==='+');}
+    if(k==='o'){if(op==='=')p.sticky=hT;else if(hT)p.sticky=(op==='+');}
+  });
+}
+function modeToken(line){
+  var t=line.replace(/^\s*chmod\s+/i,'').trim().split(/\s+/);
+  for(var i=0;i<t.length;i++){
+    if(/^[0-7]{3,4}$/.test(t[i]))return t[i];
+    if(/^([ugoa]*[+\-=][rwxXst]*)(,[ugoa]*[+\-=][rwxXst]*)*$/.test(t[i]))return t[i];
+  }
+  throw "Nessun 'mode' riconosciuto in: "+line;
+}
+function applyCommand(p,line){
+  var tok=modeToken(line);
+  if(/^[0-7]{3,4}$/.test(tok)){applyOctal(p,tok);return;}
+  tok.split(',').forEach(function(cl){applySymbolic(p,cl);});
+}
+function triStr(c,special,sch){
+  var r=c.r?'r':'-',w=c.w?'w':'-',x;
+  if(special)x=c.x?sch:sch.toUpperCase();else x=c.x?'x':'-';
+  return r+w+x;
+}
+function renderStr(p){return '-'+triStr(p.u,p.suid,'s')+triStr(p.g,p.sgid,'s')+triStr(p.o,p.sticky,'t');}
+function octStr(p){
+  function v(c){return (c.r?4:0)+(c.w?2:0)+(c.x?1:0);}
+  var sp=(p.suid?4:0)+(p.sgid?2:0)+(p.sticky?1:0);
+  return sp+''+v(p.u)+v(p.g)+v(p.o);
+}
+function permHTML(p){
+  var s=renderStr(p);
+  // colorize special chars
+  var col=s.split('').map(function(ch,i){return (i===3||i===6||i===9)&&/[sStT]/.test(ch)?'<span class="sp">'+ch+'</span>':ch;}).join('');
+  var rows=[['Owner (u)',p.u,p.suid?'SUID':''],['Group (g)',p.g,p.sgid?'SGID':''],['Other (o)',p.o,p.sticky?'Sticky':'']];
+  var tb=rows.map(function(r){var c=r[1];
+    return '<tr><td class="cls">'+r[0]+'</td><td>'+(c.r?'r':'–')+'</td><td>'+(c.w?'w':'–')+'</td><td>'+(c.x?'x':'–')+'</td><td>'+(r[2]||'—')+'</td></tr>';}).join('');
+  return '<div class="permout">'+col+'</div><div class="muted">ottale: <code>'+octStr(p)+'</code></div>'+
+    '<table class="ptable"><thead><tr><th>Classe</th><th>r</th><th>w</th><th>x</th><th>speciale</th></tr></thead><tbody>'+tb+'</tbody></table>';
+}
+function cmRun(){
+  var out=doc.getElementById('cmOut');
+  try{
+    var base=doc.getElementById('cmBase').value.trim()||'0000';
+    var p=blankPerm();applyOctal(p,base);
+    var lines=doc.getElementById('cmCmds').value.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+    var steps='';
+    lines.forEach(function(l){applyCommand(p,l);steps+='<div class="muted" style="font-size:12.5px">dopo <code>'+esc(l)+'</code> → <code>'+renderStr(p)+'</code></div>';});
+    out.innerHTML='<h3>Risultato</h3>'+permHTML(p)+(lines.length>1?'<div style="margin-top:8px">'+steps+'</div>':'');
+  }catch(err){out.innerHTML='<div class="warn">⚠ '+esc(String(err))+'</div>';}
+}
+doc.getElementById('cmRun').addEventListener('click',cmRun);
+doc.getElementById('cmEx1').addEventListener('click',function(){doc.getElementById('cmBase').value='0000';doc.getElementById('cmCmds').value='chmod 567 fileName';cmRun();});
+doc.getElementById('cmEx2').addEventListener('click',function(){doc.getElementById('cmBase').value='0000';doc.getElementById('cmCmds').value='chmod ugo=rwx fileName\nchmod g-x fileName';cmRun();});
+
+/* chmod challenge */
+function randInt(n){return Math.floor(Math.random()*n);}
+function newChallenge(){
+  var useSpecial=Math.random()<0.4;
+  var sp=useSpecial?randInt(8):0;
+  var d=''+sp+randInt(8)+randInt(8)+randInt(8);
+  var oct=useSpecial?d:d.slice(1);
+  doc.getElementById('chChallenge').textContent='chmod '+oct+' file';
+  doc.getElementById('chChallenge').dataset.oct=oct;
+  doc.getElementById('chAns').value='';
+  doc.getElementById('chRes').innerHTML='';
+}
+doc.getElementById('chCheck').addEventListener('click',function(){
+  var oct=doc.getElementById('chChallenge').dataset.oct;
+  var p=blankPerm();applyOctal(p,oct);
+  var correct=renderStr(p);
+  var ans=doc.getElementById('chAns').value.trim();
+  var res=doc.getElementById('chRes');
+  if(ans===correct)res.innerHTML='<span style="color:var(--ok)">✓ Esatto!</span> <code>'+correct+'</code>';
+  else res.innerHTML='<span style="color:var(--no)">✗ No.</span> Risposta giusta: <code>'+correct+'</code> (ottale '+octStr(p)+')';
+});
+doc.getElementById('chNew').addEventListener('click',newChallenge);
+
+/* ===================== FORK puzzles ===================== */
+var FORK=[
+ {title:"fork in un while (traccia 07-01-2026)",
+  code:"int main() {\n    int count = 0;\n    int i = 0;\n    while (i < 2) {\n        int pid = fork();\n        if (pid > 0) {\n            wait(NULL);\n        } else {\n            count++;\n        }\n        i++;\n    }\n    fprintf(stdout, \"count = %d\", count);\n}",
+  qs:[{label:"Quanti processi esistono in totale?",a:4},{label:"Quante stampe \"count = …\" vengono prodotte?",a:4}],
+  trace:"All'<b>i=0</b> il processo P0 fa <code>fork</code> → figlio C1. P0 (pid&gt;0) fa <code>wait</code>; C1 (pid==0) fa <code>count++</code> (=1). Entrambi passano a <b>i=1</b>.<br>"+
+        "All'<b>i=1</b>: P0 (count=0) fa fork → C2; C1 (count=1) fa fork → C3.<br>"+
+        "I quattro processi escono dal while a i=2 e stampano: <b>P0→0</b>, <b>C1→1</b>, <b>C2→1</b> (figlio di P0, count 0→1), <b>C3→2</b> (figlio di C1, count 1→2).<br>"+
+        "Totale: <b>4 processi</b>, <b>4 stampe</b> con valori 0,1,1,2 (ordine non deterministico per via dei wait)."},
+ {title:"Due fork in sequenza",
+  code:"int main() {\n    fork();\n    fork();\n    printf(\"ciao\\n\");\n}",
+  qs:[{label:"Quanti processi in totale?",a:4},{label:"Quante volte viene stampato \"ciao\"?",a:4}],
+  trace:"Il primo <code>fork</code> raddoppia: 2 processi. Il secondo raddoppia di nuovo: <b>2×2 = 4</b> processi. Ognuno esegue la <code>printf</code> una volta → <b>4 stampe</b>."},
+ {title:"fork in un for",
+  code:"int main() {\n    for (int i = 0; i < 3; i++)\n        fork();\n    printf(\"X\\n\");\n}",
+  qs:[{label:"Quanti processi in totale?",a:8}],
+  trace:"Ogni iterazione raddoppia il numero di processi: dopo 3 fork si hanno <b>2³ = 8</b> processi (quindi 8 stampe di X)."},
+ {title:"fork con if/else",
+  code:"int main() {\n    if (fork() == 0) {\n        fork();\n        printf(\"A\");\n    } else {\n        printf(\"B\");\n    }\n}",
+  qs:[{label:"Quanti processi in totale?",a:3},{label:"Quante volte si stampa \"A\"?",a:2},{label:"Quante volte si stampa \"B\"?",a:1}],
+  trace:"P0 fa <code>fork</code> → figlio C1. P0 (else) stampa <b>B</b> (1 volta). C1 (ramo if) fa un altro <code>fork</code> → C2; sia C1 sia C2 stampano <b>A</b> (2 volte). Totale <b>3 processi</b>: A×2, B×1."}
+];
+var forkIdx=0;
+function renderForkNav(){
+  var nav=doc.getElementById('forkNav');nav.innerHTML='';
+  FORK.forEach(function(f,i){
+    var b=doc.createElement('button');b.className='btn'+(i===forkIdx?' primary':'');b.textContent=(i+1)+'. '+f.title;
+    b.addEventListener('click',function(){forkIdx=i;renderFork();});nav.appendChild(b);
+  });
+}
+function renderFork(){
+  renderForkNav();
+  var f=FORK[forkIdx];var host=doc.getElementById('forkHost');host.innerHTML='';
+  var card=doc.createElement('div');card.className='card';
+  var h=doc.createElement('h3');h.style.marginTop='0';h.textContent=f.title;card.appendChild(h);
+  card.appendChild(codeBlock(f.code));
+  f.qs.forEach(function(q,qi2){
+    var lab=doc.createElement('label');lab.className='fld';lab.innerHTML=q.label;card.appendChild(lab);
+    var inp=doc.createElement('input');inp.type='number';inp.dataset.ans=q.a;inp.className='forkin';inp.style.maxWidth='120px';card.appendChild(inp);
+  });
+  var fb=doc.createElement('div');fb.className='feedback';card.appendChild(fb);
+  var row=doc.createElement('div');row.className='rowbtns';
+  var bChk=doc.createElement('button');bChk.className='btn primary';bChk.textContent='Verifica';
+  var bTr=doc.createElement('button');bTr.className='btn';bTr.textContent='Mostra traccia';
+  row.appendChild(bChk);row.appendChild(bTr);card.appendChild(row);
+  var rev=doc.createElement('div');rev.className='reveal';rev.innerHTML='<div class="tip"><b>Traccia:</b> '+f.trace+'</div>';card.appendChild(rev);
+  bChk.addEventListener('click',function(){
+    var ins=card.querySelectorAll('.forkin');var allok=true,any=false;
+    ins.forEach(function(inp){if(inp.value==='')return;any=true;var ok=(+inp.value===+inp.dataset.ans);inp.style.borderColor=ok?'var(--ok)':'var(--no)';if(!ok)allok=false;});
+    fb.classList.add('show');
+    fb.innerHTML=!any?'<span class="muted">Inserisci almeno una risposta.</span>':(allok?'<span class="verdict ok">✓ Tutto corretto!</span>':'<span class="verdict no">✗ Qualcosa non torna.</span> Prova la traccia.');
+  });
+  bTr.addEventListener('click',function(){rev.classList.toggle('show');});
+  host.appendChild(card);
+}
+
+/* ===================== CODE completion ===================== */
+var CODE=[
+ {title:"deposit / withdraw (mutex + condition variable)",
+  req:"Più thread chiamano <code>deposit</code> e <code>withdraw</code> su <code>resource</code> (soglia max = 100). Completa in modo che: (1) accesso in <b>mutua esclusione</b>; (2) il prelievo avvenga solo se c'è abbastanza risorsa (altrimenti il thread si sospende finché non aumenta); (3) il deposito avvenga solo se non si supera la soglia (altrimenti si sospende finché non diminuisce).",
+  skeleton:"int resource = 0;\nconst int soglia = 100;\npthread_mutex_t M;\npthread_cond_t LOW_BALANCE;\npthread_cond_t HIGH_BALANCE;\n\nvoid deposit(int amount) {\n    // ... scrivi qui ...\n}\n\nvoid withdraw(int amount) {\n    // ... scrivi qui ...\n}",
+  solution:"void deposit(int amount) {\n    pthread_mutex_lock(&M);\n    while (resource + amount > soglia)        // supererebbe la soglia?\n        pthread_cond_wait(&HIGH_BALANCE, &M);  // attendi che diminuisca\n    resource += amount;\n    pthread_cond_signal(&LOW_BALANCE);         // ora c'e' piu' risorsa da prelevare\n    pthread_mutex_unlock(&M);\n}\n\nvoid withdraw(int amount) {\n    pthread_mutex_lock(&M);\n    while (resource - amount < 0)              // risorsa insufficiente?\n        pthread_cond_wait(&LOW_BALANCE, &M);   // attendi che aumenti\n    resource -= amount;\n    pthread_cond_signal(&HIGH_BALANCE);        // ora c'e' piu' spazio per depositare\n    pthread_mutex_unlock(&M);\n}",
+  expl:"Il <code>deposit</code> aspetta sulla condition <code>HIGH_BALANCE</code> finché aggiungere <code>amount</code> non supera la soglia, poi aggiorna e risveglia un eventuale <code>withdraw</code> in attesa (più risorsa disponibile). Simmetricamente il <code>withdraw</code> aspetta su <code>LOW_BALANCE</code> finché non c'è abbastanza risorsa, poi preleva e risveglia un <code>deposit</code> (più spazio sotto soglia). Si usa sempre <code>while</code> (signal &amp; continue) e si segnala l'<b>altra</b> condition.",
+  checks:["lock all'inizio e unlock alla fine in entrambe","<code>while</code> (non <code>if</code>) sulla condizione","deposit attende su HIGH_BALANCE, withdraw su LOW_BALANCE","ogni funzione fa signal sulla condition opposta"]},
+ {title:"Problema dei 5 filosofi (deadlock-free)",
+  req:"Implementa i 5 filosofi con un array di mutex <code>forchette[N]</code>. Evita il deadlock e spiega perché la versione naïve lo causa.",
+  skeleton:"#include <pthread.h>\n#include <stdlib.h>\n#define N 5\npthread_mutex_t forchette[N];\n\nvoid* filosofo(void* arg) {\n    int id = *(int*)arg;\n    // ... pensa(); prendi forchette; mangia(); rilascia ...\n}\n\nint main() {\n    // init mutex + crea N thread\n}",
+  solution:"void* filosofo(void* arg) {\n    int id = *(int*)arg;\n    int left = id, right = (id + 1) % N;\n    // ordine globale: prendo sempre prima la forchetta con indice minore\n    int first  = left < right ? left : right;\n    int second = left < right ? right : left;\n    while (1) {\n        pensa();\n        pthread_mutex_lock(&forchette[first]);\n        pthread_mutex_lock(&forchette[second]);\n        mangia();\n        pthread_mutex_unlock(&forchette[second]);\n        pthread_mutex_unlock(&forchette[first]);\n    }\n}\n\nint main() {\n    pthread_t t[N]; int id[N];\n    for (int i = 0; i < N; i++) pthread_mutex_init(&forchette[i], NULL);\n    for (int i = 0; i < N; i++) { id[i] = i; pthread_create(&t[i], NULL, filosofo, &id[i]); }\n    for (int i = 0; i < N; i++) pthread_join(t[i], NULL);\n}",
+  expl:"<b>Deadlock naïve:</b> se ogni filosofo prende prima la forchetta sinistra e poi la destra, può capitare che tutti afferrino contemporaneamente la sinistra → ognuno attende la destra dell'altro: <b>attesa circolare</b> = deadlock. <b>Soluzione:</b> imporre un <b>ordine globale</b> sulle risorse (prendere sempre prima la forchetta di indice minore), oppure rendere asimmetrico un filosofo: si spezza il ciclo e il deadlock non può formarsi.",
+  checks:["init dei mutex e creazione/join dei thread nel main","ordine globale sulle forchette (o filosofo asimmetrico)","lock di entrambe le forchette prima di mangia()","unlock di entrambe dopo mangia()","spiegato perché la versione naïve va in deadlock"]},
+ {title:"Produttore / Consumatore (buffer circolare)",
+  req:"Buffer circolare condiviso di dimensione <code>BUFFER_SIZE</code>. Completa produttore e consumatore: il consumatore non legge da buffer vuoto, il produttore non scrive in buffer pieno.",
+  skeleton:"typedef struct {\n    int buffer[BUFFER_SIZE];\n    int readInd, writeInd, cont;\n    pthread_mutex_t M;\n    pthread_cond_t FULL, EMPTY;\n} risorsa;\nrisorsa r;\n\n// consumatore: preleva un valore\n// produttore: inserisce 'val'",
+  solution:"// CONSUMATORE\npthread_mutex_lock(&r.M);\nwhile (r.cont == 0)                     // buffer vuoto?\n    pthread_cond_wait(&r.EMPTY, &r.M);\nval = r.buffer[r.readInd];\nr.cont--;\nr.readInd = (r.readInd + 1) % BUFFER_SIZE;\npthread_cond_signal(&r.FULL);          // risveglia un produttore\npthread_mutex_unlock(&r.M);\n\n// PRODUTTORE\npthread_mutex_lock(&r.M);\nwhile (r.cont == BUFFER_SIZE)          // buffer pieno?\n    pthread_cond_wait(&r.FULL, &r.M);\nr.buffer[r.writeInd] = val;\nr.cont++;\nr.writeInd = (r.writeInd + 1) % BUFFER_SIZE;\npthread_cond_signal(&r.EMPTY);         // risveglia un consumatore\npthread_mutex_unlock(&r.M);",
+  expl:"Il consumatore attende su <code>EMPTY</code> finché <code>cont==0</code>, preleva, fa avanzare <code>readInd</code> in modo circolare e segnala <code>FULL</code>. Il produttore attende su <code>FULL</code> finché <code>cont==BUFFER_SIZE</code>, inserisce, avanza <code>writeInd</code> e segnala <code>EMPTY</code>. Gli indici sono gestiti modulo <code>BUFFER_SIZE</code>.",
+  checks:["lock/unlock attorno a tutta la sezione critica","<code>while</code> sulle condizioni buffer vuoto/pieno","aggiornamento circolare di readInd/writeInd (% BUFFER_SIZE)","signal sulla condition corretta dopo l'operazione"]}
+];
+var codeIdx=0;
+function renderCodeNav(){
+  var nav=doc.getElementById('codeNav');nav.innerHTML='';
+  CODE.forEach(function(c,i){
+    var b=doc.createElement('button');b.className='btn'+(i===codeIdx?' primary':'');b.textContent=(i+1)+'. '+c.title;
+    b.addEventListener('click',function(){codeIdx=i;renderCode();});nav.appendChild(b);
+  });
+}
+function renderCode(){
+  renderCodeNav();
+  var c=CODE[codeIdx];var host=doc.getElementById('codeHost');host.innerHTML='';
+  var card=doc.createElement('div');card.className='card';
+  card.innerHTML='<h3 style="margin-top:0">'+c.title+'</h3><div class="note">'+c.req+'</div>';
+  var ta=doc.createElement('textarea');ta.value=c.skeleton;card.appendChild(ta);
+  var row=doc.createElement('div');row.className='rowbtns';
+  var bSol=doc.createElement('button');bSol.className='btn primary';bSol.textContent='Mostra soluzione';
+  var bExp=doc.createElement('button');bExp.className='btn';bExp.textContent='Spiegazione';
+  var bRst=doc.createElement('button');bRst.className='btn';bRst.textContent='Ripristina scheletro';
+  row.appendChild(bSol);row.appendChild(bExp);row.appendChild(bRst);card.appendChild(row);
+  var solBox=doc.createElement('div');solBox.className='reveal';var sh=doc.createElement('h3');sh.textContent='Soluzione';solBox.appendChild(sh);solBox.appendChild(codeBlock(c.solution));card.appendChild(solBox);
+  var expBox=doc.createElement('div');expBox.className='reveal';expBox.innerHTML='<div class="tip">'+c.expl+'</div>';card.appendChild(expBox);
+  var chk=doc.createElement('div');chk.innerHTML='<h3>Checklist requisiti</h3>';
+  var ul=doc.createElement('ul');ul.className='checklist';
+  c.checks.forEach(function(t){var li=doc.createElement('li');li.innerHTML='<label><input type="checkbox"> <span>'+t+'</span></label>';ul.appendChild(li);});
+  chk.appendChild(ul);card.appendChild(chk);
+  bSol.addEventListener('click',function(){solBox.classList.toggle('show');});
+  bExp.addEventListener('click',function(){expBox.classList.toggle('show');});
+  bRst.addEventListener('click',function(){ta.value=c.skeleton;});
+  host.appendChild(card);
+}
+
+/* ===================== EXAM simulation ===================== */
+var THEORY=[
+ {q:"Descrivi il comportamento della funzione <code>dup2</code> mostrandone la sintassi.",
+  a:"<code>int dup2(int target, int newfd);</code> — chiude <code>newfd</code> se aperto e ne fa una copia di <code>target</code> (puntano allo stesso elemento della tabella dei file aperti di sistema, quindi allo stesso I/O pointer). Usata per redirigere stdin/stdout: es. <code>dup2(pipe[1], STDOUT_FILENO)</code>. Ritorna un valore negativo in caso di errore."},
+ {q:"Illustra le differenze tra <code>find</code> e <code>locate</code> e spiega <code>find ~ -type f -name \"*database*\" -size +1G -delete</code>.",
+  a:"<code>find</code> attraversa il filesystem in tempo reale (lento ma sempre aggiornato); <code>locate</code> interroga un database creato da <code>updatedb</code> (veloce, ma può essere non aggiornato). Il comando cerca nella home (<code>~</code>) i <b>file regolari</b> con \"database\" nel nome e dimensione <b>&gt; 1GB</b> e li <b>cancella</b>."},
+ {q:"Cosa accade ai job in esecuzione se il loro terminale viene chiuso? Differenza fra <code>nohup</code> e <code>disown</code>.",
+  a:"Alla chiusura del terminale i job ricevono <b>SIGHUP</b> e di norma terminano. <code>nohup cmd</code> avvia il comando immune a SIGHUP (output su <code>nohup.out</code>, niente stdin); <code>disown %job</code> agisce su un job <b>già in esecuzione</b>, rendendolo immune a SIGHUP e togliendolo dalla tabella dei job."},
+ {q:"Spiega la primitiva <code>fork()</code>, con un esempio e il relativo output.",
+  a:"<code>pid_t fork(void)</code> crea un processo figlio che eredita una copia di dati/stack/heap del padre. Ritorna <b>0</b> al figlio e il <b>PID del figlio</b> (&gt;0) al padre (−0 errore). Es.: <code>if(fork()==0) printf(\"figlio\"); else printf(\"padre\");</code> stampa entrambe le righe (ordine non deterministico)."}
+];
+var CHMODQ=[
+ {cmd:"chmod 6757 fileName",base:"0000"},
+ {cmd:"chmod 567 fileName",base:"0000"},
+ {cmd:"chmod 750 fileName",base:"0000"},
+ {cmd:"chmod ugo=rwx fileName\nchmod g-x fileName",base:"0000"}
+];
+function chmodAnswerHTML(item){
+  var p=blankPerm();applyOctal(p,item.base);
+  item.cmd.split('\n').forEach(function(l){applyCommand(p,l);});
+  return permHTML(p);
+}
+var exTimerId=null,exRemaining=3600;
+function fmt(s){var m=Math.floor(s/60),ss=s%60;return (m<10?'0':'')+m+':'+(ss<10?'0':'')+ss;}
+function updTimer(){var t=doc.getElementById('exTimer');t.textContent=fmt(exRemaining);t.classList.toggle('low',exRemaining<=300);}
+function exStart(){if(exTimerId)return;doc.getElementById('exTimer').classList.add('run');
+  exTimerId=setInterval(function(){if(exRemaining>0){exRemaining--;updTimer();}else{clearInterval(exTimerId);exTimerId=null;}},1000);}
+function exPause(){if(exTimerId){clearInterval(exTimerId);exTimerId=null;doc.getElementById('exTimer').classList.remove('run');}}
+doc.getElementById('exStart').addEventListener('click',exStart);
+doc.getElementById('exPause').addEventListener('click',exPause);
+function pick(arr){return arr[randInt(arr.length)];}
+function exBuild(){
+  exPause();exRemaining=3600;updTimer();
+  var host=doc.getElementById('exHost');host.innerHTML='';
+  var th=pick(THEORY),cm=pick(CHMODQ),fk=pick(FORK),cd=pick(CODE);
+  // Es1
+  var c1=doc.createElement('div');c1.className='card exq';
+  c1.innerHTML='<span class="tag">Esercizio 1</span> <span class="tag pts">4 punti</span><p style="font-weight:600">'+th.q+'</p>';
+  var r1=doc.createElement('div');r1.className='reveal';r1.innerHTML='<div class="tip"><b>Risposta modello:</b> '+th.a+'</div>';
+  var b1=doc.createElement('button');b1.className='btn';b1.textContent='Mostra soluzione';b1.onclick=function(){r1.classList.toggle('show');};
+  c1.appendChild(b1);c1.appendChild(r1);host.appendChild(c1);
+  // Es2
+  var c2=doc.createElement('div');c2.className='card exq';
+  c2.innerHTML='<span class="tag">Esercizio 2</span> <span class="tag pts">8 punti</span><p style="font-weight:600">Spiega <code>chmod</code> e indica i permessi risultanti (da <code>'+cm.base+'</code>):</p>';
+  c2.appendChild(codeBlock(cm.cmd));
+  var r2=doc.createElement('div');r2.className='reveal';r2.innerHTML='<h3>Permessi risultanti</h3>'+chmodAnswerHTML(cm);
+  var b2=doc.createElement('button');b2.className='btn';b2.textContent='Mostra soluzione';b2.onclick=function(){r2.classList.toggle('show');};
+  c2.appendChild(b2);c2.appendChild(r2);host.appendChild(c2);
+  // Es3
+  var c3=doc.createElement('div');c3.className='card exq';
+  c3.innerHTML='<span class="tag">Esercizio 3</span> <span class="tag pts">6 punti</span><p style="font-weight:600">Spiega cosa fa il seguente codice ('+fk.title+'):</p>';
+  c3.appendChild(codeBlock(fk.code));
+  var r3=doc.createElement('div');r3.className='reveal';r3.innerHTML='<div class="tip"><b>Spiegazione:</b> '+fk.trace+'</div>';
+  var b3=doc.createElement('button');b3.className='btn';b3.textContent='Mostra soluzione';b3.onclick=function(){r3.classList.toggle('show');};
+  c3.appendChild(b3);c3.appendChild(r3);host.appendChild(c3);
+  // Es4
+  var c4=doc.createElement('div');c4.className='card exq';
+  c4.innerHTML='<span class="tag">Esercizio 4</span> <span class="tag pts">12 punti</span><p style="font-weight:600">'+cd.title+'</p><div class="note">'+cd.req+'</div>';
+  c4.appendChild(codeBlock(cd.skeleton));
+  var r4=doc.createElement('div');r4.className='reveal';var h4=doc.createElement('h3');h4.textContent='Soluzione';r4.appendChild(h4);r4.appendChild(codeBlock(cd.solution));
+  var d4=doc.createElement('div');d4.className='tip';d4.innerHTML=cd.expl;r4.appendChild(d4);
+  var b4=doc.createElement('button');b4.className='btn';b4.textContent='Mostra soluzione';b4.onclick=function(){r4.classList.toggle('show');};
+  c4.appendChild(b4);c4.appendChild(r4);host.appendChild(c4);
+  // self eval
+  var ev=doc.createElement('div');ev.className='card';
+  ev.innerHTML='<h3 style="margin-top:0">Autovalutazione</h3><p class="small">Assegna i punti ottenuti per ciascun esercizio.</p>';
+  var maxs=[4,8,6,12];var grid=doc.createElement('div');grid.className='inline';
+  maxs.forEach(function(mx,i){
+    var d=doc.createElement('div');d.innerHTML='<label class="fld">Es. '+(i+1)+' (max '+mx+')</label>';
+    var inp=doc.createElement('input');inp.type='number';inp.min=0;inp.max=mx;inp.value=0;inp.className='pts-in exptin';inp.dataset.max=mx;
+    inp.addEventListener('input',exRecalc);d.appendChild(inp);grid.appendChild(d);
+  });
+  ev.appendChild(grid);host.appendChild(ev);
+  exRecalc();
+}
+function exRecalc(){
+  var tot=0;[].slice.call(doc.querySelectorAll('.exptin')).forEach(function(inp){
+    var v=Math.max(0,Math.min(+inp.dataset.max,+inp.value||0));tot+=v;
+  });
+  doc.getElementById('exTotal').textContent=tot;
+}
+doc.getElementById('exNewExam').addEventListener('click',exBuild);
+
+/* ===================== init ===================== */
+quizStart();
+renderFork();
+renderCode();
+newChallenge();
+cmRun();
+exBuild();
+})();
+</script>
+</body>
+</html>
